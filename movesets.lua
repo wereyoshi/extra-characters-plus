@@ -195,7 +195,6 @@ local function rosalina_before_action(m, nextAct)
 end
 
 local function rosalina_on_interact(m, o, intType)
-    djui_chat_message_create("3")
     if intType == INTERACT_GRABBABLE and m.action == _G.ACT_SPINJUMP and o.oInteractionSubtype & INT_SUBTYPE_NOT_GRABBABLE == 0 then
         m.action = ACT_MOVE_PUNCHING
         m.actionArg = 1
@@ -204,7 +203,6 @@ local function rosalina_on_interact(m, o, intType)
 end
 
 local function rosalina_on_pvp_attack(attacker, victim)
-    djui_chat_message_create("4")
     if attacker.action == _G.ACT_SPINJUMP then
         victim.faceAngle.y = mario_obj_angle_to_object(victim, attacker.marioObj)
         set_mario_action(victim, ACT_BACKWARD_AIR_KB, 0)
