@@ -228,14 +228,14 @@ local function on_character_select_load()
     local CT_ROSALINA = extraCharacters[9].tablePos
     
     -- Peach
-    _G.charSelect.hook_moveset_event(HOOK_MARIO_UPDATE, peach_update, CT_PEACH)
+    _G.charSelect.character_hook_moveset(CT_PEACH, HOOK_MARIO_UPDATE, peach_update)
     -- Daisy
-    _G.charSelect.hook_moveset_event(HOOK_MARIO_UPDATE, daisy_update, CT_DAISY)
+    _G.charSelect.character_hook_moveset(CT_DAISY, HOOK_MARIO_UPDATE, daisy_update)
     -- Rosalina
-    _G.charSelect.hook_moveset_event(HOOK_MARIO_UPDATE, rosalina_update, CT_ROSALINA)
-    _G.charSelect.hook_moveset_event(HOOK_ON_PVP_ATTACK, rosalina_on_pvp_attack, CT_ROSALINA)
-    _G.charSelect.hook_moveset_event(HOOK_ON_INTERACT, rosalina_on_interact, CT_ROSALINA)
-    _G.charSelect.hook_moveset_event(HOOK_BEFORE_SET_MARIO_ACTION, rosalina_before_action, CT_ROSALINA)
+    _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_MARIO_UPDATE, rosalina_update)
+    _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_ON_PVP_ATTACK, rosalina_on_pvp_attack)
+    _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_ON_INTERACT, rosalina_on_interact)
+    _G.charSelect.character_hook_moveset(CT_ROSALINA, HOOK_BEFORE_SET_MARIO_ACTION, rosalina_before_action)
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
