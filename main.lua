@@ -850,7 +850,7 @@ extraCharacters = {
             [CHAR_ANIM_LAND_ON_STOMACH] = 'donkey_2C_anim_land_on_stomach',
             [CHAR_ANIM_SUFFOCATING] = 'donkey_2F_suffocating',
             [CHAR_ANIM_LAND_FROM_DOUBLE_JUMP] = 'donkey_4B_land_from_double_jump',
-            [CHAR_ANIM_LAND_FROM_SINGLE_JUMP] = 'donkey_4D_land_from_single_jump',
+            [CHAR_ANIM_LAND_FROM_SINGLE_JUMP] = 'donkey_4E_land_from_single_jump',
             [CHAR_ANIM_SLOW_LAND_FROM_DIVE] = 'donkey_5A_slow_land_from_dive',
             [CHAR_ANIM_MISSING_CAP] = 'donkey_5E_missing_cap',
             [CHAR_ANIM_PULL_DOOR_WALK_IN] = 'donkey_5F_pull_door_walk_in',
@@ -865,7 +865,7 @@ extraCharacters = {
             [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'donkey_37_take_cap_off_then_on',
             [CHAR_ANIM_HEAD_STUCK_IN_GROUND] = 'donkey_39_head_stuck_in_ground',
             [CHAR_ANIM_LEGS_STUCK_IN_GROUND] = 'donkey_55_legs_stuck_in_ground',
-            [CHAR_ANIM_GENERAL_LAND] = 'donkey_56_general_land',
+            [CHAR_ANIM_GENERAL_LAND] = 'donkey_57_general_land',
             [CHAR_ANIM_RUNNING] = 'donkey_72_running',
             [CHAR_ANIM_GROUND_THROW] = 'donkey_65_ground_throw',
             [CHAR_ANIM_PLACE_LIGHT_OBJ] = 'donkey_6E_place_light_obj',
@@ -882,6 +882,8 @@ extraCharacters = {
             [CHAR_ANIM_RETURN_STAR_APPROACH_DOOR] = 'donkey_9D_return_star_approach_door',
             [CHAR_ANIM_RELEASE_BOWSER] = 'donkey_B7_release_bowser',
             [CHAR_ANIM_HEAVY_THROW] = 'donkey_B9_heavy_throw',
+            [CHAR_ANIM_SLIDEFLIP_LAND] = 'donkey_BE_sideflip_land',
+            [CHAR_ANIM_TRIPLE_JUMP_LAND] = 'donkey_C0_triple_jump_land',
         }
     },
     --------------
