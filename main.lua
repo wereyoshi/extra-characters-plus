@@ -885,6 +885,10 @@ extraCharacters = {
             [CHAR_ANIM_SLIDEFLIP_LAND] = 'donkey_BE_sideflip_land',
             [CHAR_ANIM_TRIPLE_JUMP_LAND] = 'donkey_C0_triple_jump_land',
             [CHAR_ANIM_CROUCHING] = 'donkey_98_crouching',
+            [CHAR_ANIM_START_CRAWLING] = 'donkey_9B_start_crawling',
+            [CHAR_ANIM_STOP_CRAWLING] = 'donkey_9A_stop_crawling',
+            [CHAR_ANIM_STOP_CROUCHING] = 'donkey_96_stop_crouching',
+            [CHAR_ANIM_START_CROUCHING] = 'donkey_97_start_crouching',
         }
     },
     --------------
