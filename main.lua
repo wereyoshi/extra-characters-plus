@@ -860,7 +860,6 @@ extraCharacters = {
             [CHAR_ANIM_CREDITS_TAKE_OFF_CAP] = 'donkey_22_credits_take_off_cap',
             [CHAR_ANIM_STAND_UP_FROM_LAVA_BOOST] = 'donkey_28_standup_from_lava_boost',
             [CHAR_ANIM_THROW_CATCH_KEY] = 'donkey_31_throw_catch_key',
-            [CHAR_ANIM_FAST_LEDGE_GRAB] = 'donkey_34_fast_ledge_grab',
             [CHAR_ANIM_PUT_CAP_ON] = 'donkey_36_put_cap_on',
             [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'donkey_37_take_cap_off_then_on',
             [CHAR_ANIM_HEAD_STUCK_IN_GROUND] = 'donkey_39_head_stuck_in_ground',
@@ -889,6 +888,8 @@ extraCharacters = {
             [CHAR_ANIM_STOP_CRAWLING] = 'donkey_9A_stop_crawling',
             [CHAR_ANIM_STOP_CROUCHING] = 'donkey_96_stop_crouching',
             [CHAR_ANIM_START_CROUCHING] = 'donkey_97_start_crouching',
+            [CHAR_ANIM_IDLE_ON_LEDGE] = 'donkey_33_idle_on_ledge',
+            [CHAR_ANIM_FAST_LEDGE_GRAB] = 'donkey_34_fast_ledge_grab',
         }
     },
     --------------
