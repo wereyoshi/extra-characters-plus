@@ -1245,14 +1245,52 @@ hook_mario_action(ACT_SPINJUMP, { every_frame = act_spinjump }, INT_KICK)
 -- Wapeach Axe Attacks --
 -------------------------
 
-local colObjLists = { OBJ_LIST_GENACTOR, OBJ_LIST_PUSHABLE, OBJ_LIST_SURFACE, OBJ_LIST_PLAYER}
+---- suggest moving this stuff into another script with special behavior lists for all other character weapons as well
+
+local colObjLists = { OBJ_LIST_GENACTOR, OBJ_LIST_PUSHABLE, OBJ_LIST_SURFACE }
+local bhvBlacklist = { id_bhvBowser, id_bhvDoor, id_bhvDoorWarp, id_bhvStarDoor, id_bhvUnlockDoorStar, id_bhvToadMessage,
+    id_bhvFireSpitter, id_bhvExplosion }
+for i, bhv in ipairs(bhvBlacklist) do
+    bhvBlacklist[bhv] = true
+    bhvBlacklist[i] = nil
+end
+
+---@param o Object
+---@param o2 Object
+local function attack_bully(o, o2)
+    o2.oBullyLastNetworkPlayerIndex = o.globalPlayerIndex
+    o2.oMoveAngleYaw = o.oMoveAngleYaw
+    o2.oForwardVel = 30
+
+    o2.oInteractStatus = o2.oInteractStatus | ATTACK_FAST_ATTACK | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED
+end
+---@param o Object
+---@param o2 Object
+local function attack_wooden_post(o, o2)
+    o2.oWoodenPostMarioPounding = 1
+    o2.oWoodenPostSpeedY = -100.0
+    cur_obj_play_sound_2(SOUND_GENERAL_POUND_WOOD_POST)
+end
+
+-- list for edge case interactions
+bhvWapeachAxeList = {
+    [id_bhvSmallBully] = attack_bully,
+    [id_bhvBigBully] = attack_bully,
+    [id_bhvBigBullyWithMinions] = attack_bully,
+    [id_bhvSmallChillBully] = attack_bully,
+    [id_bhvBigChillBully] = attack_bully,
+    [id_bhvWoodenPost] = attack_wooden_post,
+}
+
+----
 
 ACT_AXECHOP = allocate_mario_action(ACT_GROUP_STATIONARY | ACT_FLAG_STATIONARY)
 
 ---@param o Object
 local function bhv_axe_attack_init(o)
     o.oFlags = OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE | OBJ_FLAG_SET_FACE_ANGLE_TO_MOVE_ANGLE
-    o.oDamageOrCoinValue = 0
+
+    o.oDamageOrCoinValue = 2
     o.oNumLootCoins = 0
     o.oHealth = 0
     o.hitboxRadius = 60
@@ -1261,15 +1299,17 @@ local function bhv_axe_attack_init(o)
     o.hurtboxHeight = 80
     o.hitboxDownOffset = 0
     o.oInteractType = 0
+
     cur_obj_scale(1)
     cur_obj_become_tangible()
+
     network_init_object(o, true, {})
 end
 
 ---@param o Object
 local function bhv_axe_attack_loop(o)
-    cur_obj_update_floor_and_resolve_wall_collisions(90)
-    cur_obj_move_standard(78)
+    --cur_obj_update_floor_and_resolve_wall_collisions(90)
+    --cur_obj_move_standard(78)
     local m = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
 
     local dist = 185
@@ -1277,44 +1317,50 @@ local function bhv_axe_attack_loop(o)
     --local y = get_hand_foot_pos_y(m, 0) + sins(m.faceAngle.x) * dist
     local z = get_hand_foot_pos_z(m, 0) + coss(m.faceAngle.y) * coss(m.faceAngle.x) * dist
 
-    
 
-    local handPos_v3f = {x=get_hand_foot_pos_x(m, 0), y=get_hand_foot_pos_y(m, 0), z=get_hand_foot_pos_z(m, 0)}
-    local axePos_v3f = {x=handPos_v3f.x, y=handPos_v3f.y, z=handPos_v3f.z}
-    vec3f_sub(axePos_v3f,m.pos)
+    local handPos_v3f = { x = get_hand_foot_pos_x(m, 0), y = get_hand_foot_pos_y(m, 0), z = get_hand_foot_pos_z(m, 0) }
+    local axePos_v3f = { x = handPos_v3f.x, y = handPos_v3f.y, z = handPos_v3f.z }
+    vec3f_sub(axePos_v3f, m.pos)
     vec3f_normalize(axePos_v3f)
     vec3f_mul(axePos_v3f, 120)
+
     o.oPosX = x
     o.oPosY = handPos_v3f.y - axePos_v3f.y
     o.oPosZ = z
-    o.header.gfx.pos.x = o.oPosX
-    o.header.gfx.pos.y = o.oPosY
-    o.header.gfx.pos.z = o.oPosZ
 
+    -- players
+    local targetM = nearest_mario_state_to_object(o)
+    if targetM and targetM.playerIndex == 0 and targetM.marioObj.globalPlayerIndex ~= o.globalPlayerIndex
+        and targetM.action & ACT_FLAG_INVULNERABLE == 0 and targetM.invincTimer == 0 and obj_check_hitbox_overlap(targetM.marioObj, o) then
+        distToTarget = dist_between_objects(m.marioObj, targetM.marioObj)
+        axeLength = dist_between_objects(m.marioObj, o)
 
+        if distToTarget >= axeLength then
+            o.oDamageOrCoinValue = 5
+            o.oInteractionSubtype = o.oInteractionSubtype | INT_SUBTYPE_BIG_KNOCKBACK
+            take_damage_and_knock_back(targetM, o)
+        else
+            o.oDamageOrCoinValue = 2
+            o.oInteractionSubtype = o.oInteractionSubtype & ~INT_SUBTYPE_BIG_KNOCKBACK
+            take_damage_and_knock_back(targetM, o)
+            targetM.faceAngle.y = m.faceAngle.y + 0x8000
+        end
+    end
+    -- other objects
     for i, list in ipairs(colObjLists) do
         local o2 = obj_get_first(list)
         while o2 do
-            if o ~= o2 and obj_check_hitbox_overlap(o, o2) then
+            if o ~= o2 and o2.oInteractStatus & INT_STATUS_INTERACTED == 0 and obj_check_hitbox_overlap(o, o2) then
                 local bhv = get_id_from_behavior(o2.behavior)
-                
-                if bhv == id_bhvMario then
-
-                    sweetspot = dist_between_objects(m.marioObj,o2)
-                    axelength = dist_between_objects(m.marioObj,o)
-                    
-                    if axelength>= sweetspot then
-                        o.oDamageOrCoinValue = 5
+                if not bhvBlacklist[bhv] then
+                    if bhvWapeachAxeList[bhv] then
+                        bhvWapeachAxeList[bhv](o, o2)
                     else
-                        o.oDamageOrCoinValue = 2
+                        o2.oInteractStatus = o2.oInteractStatus | ATTACK_FAST_ATTACK | INT_STATUS_WAS_ATTACKED |
+                        INT_STATUS_INTERACTED
                     end
-                
-                elseif bhv ~= id_bhvBowser then
-                    o2.oInteractStatus = o2.oInteractStatus | ATTACK_FAST_ATTACK | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
-                    o2.oVelY = o2.oVelY + 10
                 end
             end
-
             o2 = obj_get_next(o2)
         end
     end
@@ -1322,7 +1368,6 @@ local function bhv_axe_attack_loop(o)
     if o.oTimer == 15 then
         obj_mark_for_deletion(o)
     end
-    
 end
 
 local id_bhvAxeAttack = hook_behavior(nil, OBJ_LIST_DESTRUCTIVE, true, bhv_axe_attack_init, bhv_axe_attack_loop)
@@ -1338,10 +1383,9 @@ local function allow_interact(m, o, intType)
 end
 ---@param m MarioState
 local function act_wapeach_axechop(m)
-
-local slope = -find_floor_slope(m, 0)
-m.faceAngle.x = slope
-m.marioObj.header.gfx.angle.x = slope
+    local slope = -find_floor_slope(m, 0)
+    m.faceAngle.x = slope
+    m.marioObj.header.gfx.angle.x = slope
 
     if m.actionTimer == 0 then
         set_character_animation(m, CHAR_ANIM_BREAKDANCE)
@@ -1349,19 +1393,20 @@ m.marioObj.header.gfx.angle.x = slope
         play_character_sound(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE)
     end
 
-    if m.actionTimer >= 14 and m.actionTimer <= 40 then     m.marioBodyState.handState = 2    end
+    if m.actionTimer >= 14 and m.actionTimer <= 40 then m.marioBodyState.handState = 2 end
 
     if m.actionTimer == 17 then
         play_sound(SOUND_OBJ_POUNDING_LOUD, m.marioObj.header.gfx.cameraToObject)
         if m.playerIndex == 0 then
-            spawn_sync_object(id_bhvAxeAttack, E_MODEL_EXCLAMATION_BOX_OUTLINE, get_hand_foot_pos_x(m, 0), get_hand_foot_pos_y(m, 0) + 25, get_hand_foot_pos_z(m, 0), function(o)
-                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
-            end)
+            spawn_sync_object(id_bhvAxeAttack, E_MODEL_EXCLAMATION_BOX_OUTLINE, get_hand_foot_pos_x(m, 0),
+                get_hand_foot_pos_y(m, 0) + 25, get_hand_foot_pos_z(m, 0), function(o)
+                    o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+                end)
         end
-            -- shakey cam if you are close enough to petey (based on local player's camera)
-            if vec3f_length(m.marioObj.header.gfx.cameraToObject) < 2000 then
-                set_camera_shake_from_hit(SHAKE_SMALL_DAMAGE)
-            end
+        -- shakey cam if you are close enough to petey (based on local player's camera)
+        if vec3f_length(m.marioObj.header.gfx.cameraToObject) < 2000 then
+            set_camera_shake_from_hit(SHAKE_SMALL_DAMAGE)
+        end
     end
 
     if is_anim_at_end(m) ~= 0 then
