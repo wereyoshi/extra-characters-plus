@@ -158,6 +158,7 @@ function toadette_update(m)
         m.vel.y = m.vel.y + 0.9
     end
 end
+
 -----------------
 -- Peach Float --
 -----------------
@@ -174,7 +175,7 @@ local function act_peach_float(m)
         play_character_sound(m, CHAR_SOUND_HELLO)
     end
 
-    
+
     if m.forwardVel > 20 then
         m.forwardVel = m.forwardVel - 0.5
     end
@@ -220,8 +221,8 @@ local function act_daisy_jump(m)
 
     -- setup when action starts (vertical speed and voiceline)
     if m.actionTimer == 0 then
-        m.vel.y = m.forwardVel*0.3 + 40
-        m.forwardVel = m.forwardVel*0.7
+        m.vel.y = m.forwardVel * 0.3 + 40
+        m.forwardVel = m.forwardVel * 0.7
         play_character_sound(m, CHAR_SOUND_HELLO)
     end
 
@@ -270,7 +271,6 @@ local YOSHI_SOUND_FLUTTER = audio_sample_load("yoshi_flutter.ogg") -- Load audio
 
 ---@param m MarioState
 function act_flutter(m)
-
     -- End flutter after 1 second
     if m.actionTimer >= 30 or (m.input & INPUT_A_DOWN) == 0 then
         if m.actionTimer < 30 then
@@ -279,7 +279,8 @@ function act_flutter(m)
         return set_mario_action(m, ACT_FREEFALL, 0)
     end
 
-    local ended = common_air_action_step(m, ACT_JUMP_LAND, CHAR_ANIM_RUNNING_UNUSED, 0) ~= 0 -- Checks if the action ended earlier due to forced actions like bonking or landing
+    local ended = common_air_action_step(m, ACT_JUMP_LAND, CHAR_ANIM_RUNNING_UNUSED, 0) ~=
+    0                                                                                        -- Checks if the action ended earlier due to forced actions like bonking or landing
 
     if ended then
         audio_sample_stop(YOSHI_SOUND_FLUTTER) -- Stop sample after landing
@@ -293,7 +294,7 @@ function act_flutter(m)
 
     m.marioBodyState.eyeState = MARIO_EYES_CLOSED ---@type MarioEyesGSCId Eye State
     m.vel.y = approach_f32(m.vel.y, m.actionTimer / 1.25, 8, 8) -- Height increases faster as the 1 second passes
-    m.marioObj.header.gfx.animInfo.animAccel = 32768 * 4 -- Animation Speed
+    m.marioObj.header.gfx.animInfo.animAccel = 32768 * 4        -- Animation Speed
 
     m.actionTimer = m.actionTimer + 1
     return false
@@ -313,9 +314,11 @@ hook_mario_action(ACT_FLUTTER, { every_frame = act_flutter })
 ---------------
 
 ACT_BIRDO_HOLD_WALKING = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_OBJECT)
-ACT_BIRDO_SPIT_EGG = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_FLAG_IDLE | ACT_FLAG_ALLOW_FIRST_PERSON | ACT_FLAG_PAUSE_EXIT)
+ACT_BIRDO_SPIT_EGG = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_FLAG_IDLE | ACT_FLAG_ALLOW_FIRST_PERSON |
+ACT_FLAG_PAUSE_EXIT)
 ACT_BIRDO_SPIT_EGG_WALK = allocate_mario_action(ACT_FLAG_MOVING | ACT_FLAG_ALLOW_FIRST_PERSON)
-ACT_BIRDO_SPIT_EGG_AIR = allocate_mario_action(ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
+ACT_BIRDO_SPIT_EGG_AIR = allocate_mario_action(ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION |
+ACT_FLAG_CONTROL_JUMP_HEIGHT)
 
 -- this version works more like regular walking
 ---@param m MarioState
@@ -537,7 +540,7 @@ local function act_birdo_spit_egg_walk(m)
         end
 
         mBody.torsoAngle.y = convert_s16(m.faceAngle.y - m.marioObj.header.gfx.angle.y) * 0.4
-        mBody.headAngle.y =  m.faceAngle.y - m.marioObj.header.gfx.angle.y - mBody.torsoAngle.y
+        mBody.headAngle.y = m.faceAngle.y - m.marioObj.header.gfx.angle.y - mBody.torsoAngle.y
 
         if m.intendedMag - m.forwardVel > 16 then
             set_mario_particle_flags(m, PARTICLE_DUST, false)
@@ -692,7 +695,8 @@ function bhv_birdo_egg_loop(o)
                 while o2 and o.numCollidedObjs < 4 do
                     if o ~= o2 and detect_object_hitbox_overlap(o, o2) ~= 0 then
                         if obj_has_behavior_id(o2, id_bhvBowser) == 0 then
-                            o2.oInteractStatus = o2.oInteractStatus | ATTACK_PUNCH | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
+                            o2.oInteractStatus = o2.oInteractStatus | ATTACK_PUNCH | INT_STATUS_WAS_ATTACKED |
+                            INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
                         end
                         o2.numCollidedObjs = o2.numCollidedObjs - 1 -- prevent game crash
                         if o.oBehParams == 0 or birdo_fireball_interaction(o2, o) then
@@ -874,7 +878,7 @@ function birdo_update(m)
             m.actionArg = 0
         end
 
-        local mouthPos = {x = 0, y = 0, z = 0}
+        local mouthPos = { x = 0, y = 0, z = 0 }
         local yaw = m.faceAngle.y
         local pitch = 0
         if canShoot then
@@ -897,26 +901,26 @@ function birdo_update(m)
                     mouthPos.z = m.pos.z + coss(yaw) * 80
                 end
             else
-                mouthPos.x = m.marioBodyState.headPos.x + sins(yaw+m.marioBodyState.headAngle.y) * 60
+                mouthPos.x = m.marioBodyState.headPos.x + sins(yaw + m.marioBodyState.headAngle.y) * 60
                 mouthPos.y = m.marioBodyState.headPos.y + 20
-                mouthPos.z = m.marioBodyState.headPos.z + coss(yaw+m.marioBodyState.headAngle.y) * 60
+                mouthPos.z = m.marioBodyState.headPos.z + coss(yaw + m.marioBodyState.headAngle.y) * 60
             end
         end
 
         if canShoot and e.spitTimer == 0 and e.flameCharge >= 30 and m.action & ACT_FLAG_SWIMMING == 0 then
             spawn_non_sync_object(id_bhvKoopaShellFlame, E_MODEL_RED_FLAME,
-            mouthPos.x,
-            mouthPos.y,
-            mouthPos.z,
-            function(o)
-                o.oKoopaShellFlameUnkF8 = 2
-                o.oMoveAngleYaw = math.random(0, 0xFFFF)
-                o.oVelY = math.random(1, 10)
-                o.oAnimState = math.random(1, 10)
-                o.oGravity = -4.0
-                o.oTimer = 1
-                o.oForwardVel = math.random(1, 10)
-            end)
+                mouthPos.x,
+                mouthPos.y,
+                mouthPos.z,
+                function(o)
+                    o.oKoopaShellFlameUnkF8 = 2
+                    o.oMoveAngleYaw = math.random(0, 0xFFFF)
+                    o.oVelY = math.random(1, 10)
+                    o.oAnimState = math.random(1, 10)
+                    o.oGravity = -4.0
+                    o.oTimer = 1
+                    o.oForwardVel = math.random(1, 10)
+                end)
             play_sound(SOUND_AIR_BLOW_FIRE, m.marioObj.header.gfx.cameraToObject)
         end
 
@@ -942,16 +946,17 @@ function birdo_update(m)
                 if m.floor and m.floor.object and m.floor.object.oForwardVel ~= 0 then
                     eggVel = eggVel + m.floor.object.oForwardVel * 2
                 end
-                spawn_sync_object(id_bhvBirdoEgg, model, mouthPos.x + sins(yaw) * 40 * coss(pitch), mouthPos.y, mouthPos.z + coss(yaw) * 40 * coss(pitch), function(o)
-                        o.oForwardVel = math.max(eggVel, 40)
-                        o.oMoveAngleYaw = yaw
-                        o.oFaceAnglePitch = pitch
-                        o.oMoveAnglePitch = pitch
-                        o.oIntangibleTimer = 100
-                        o.globalPlayerIndex = gIndex
-                        o.oBehParams = (isFireball and 1) or 0
-                        spawn_mist_particles_variable(20, 120, 5)
-                    end)
+                spawn_sync_object(id_bhvBirdoEgg, model, mouthPos.x + sins(yaw) * 40 * coss(pitch), mouthPos.y,
+                    mouthPos.z + coss(yaw) * 40 * coss(pitch), function(o)
+                    o.oForwardVel = math.max(eggVel, 40)
+                    o.oMoveAngleYaw = yaw
+                    o.oFaceAnglePitch = pitch
+                    o.oMoveAnglePitch = pitch
+                    o.oIntangibleTimer = 100
+                    o.globalPlayerIndex = gIndex
+                    o.oBehParams = (isFireball and 1) or 0
+                    spawn_mist_particles_variable(20, 120, 5)
+                end)
             end
         end
     elseif e.spitTimer ~= 0 then
@@ -977,6 +982,7 @@ function birdo_update(m)
         end
     end
 end
+
 hook_mario_action(ACT_BIRDO_HOLD_WALKING, { every_frame = act_birdo_hold_walking })
 hook_mario_action(ACT_BIRDO_SPIT_EGG, { every_frame = act_birdo_spit_egg })
 hook_mario_action(ACT_BIRDO_SPIT_EGG_AIR, { every_frame = act_birdo_spit_egg_air })
@@ -1122,20 +1128,20 @@ end
 
 ---@param o Object
 local function bhv_spin_attack_loop(o)
-    cur_obj_set_pos_relative_to_parent(0, 20, 0) -- Makes it move to its parent's position
+    cur_obj_set_pos_relative_to_parent(0, 20, 0)                            -- Makes it move to its parent's position
 
-    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000 -- Rotates it
+    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000                              -- Rotates it
 
     pM = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)] -- Parent MarioState
 
-    if pM.action ~= ACT_SPINJUMP then -- Deletes itself once the action changes
+    if pM.action ~= ACT_SPINJUMP then                                       -- Deletes itself once the action changes
         obj_mark_for_deletion(o)
     end
 end
 
 local id_bhvSpinAttack = hook_behavior(nil, OBJ_LIST_GENACTOR, true, bhv_spin_attack_init, bhv_spin_attack_loop)
 
-gPlayerSyncTable[0].canSpin = true -- Determines if you can spin
+gPlayerSyncTable[0].canSpin = true  -- Determines if you can spin
 gPlayerSyncTable[0].canGrab = false -- Determines if you're near a grabbable
 
 -- Spinable actions, these are actions you can spin out of
@@ -1156,26 +1162,24 @@ local ROSALINA_SOUND_SPIN = audio_sample_load("spin_attack.ogg") -- Load audio s
 
 ---@param m MarioState
 function act_spinjump(m)
- 
     if m.actionTimer >= 15 then
         return set_mario_action(m, ACT_FREEFALL, 0) -- End the action
     end
 
     if m.actionTimer == 0 then
-        play_character_sound(m, CHAR_SOUND_HELLO) -- Plays the character sound
-        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1) -- Plays the spin sound sample
+        play_character_sound(m, CHAR_SOUND_HELLO)                    -- Plays the character sound
+        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1)             -- Plays the spin sound sample
         m.particleFlags = m.particleFlags | ACTIVE_PARTICLE_SPARKLES -- Spawns sparkle particles
 
-        m.vel.y = 30 -- Initial upward velocity
-        m.marioObj.hitboxRadius = 100 -- Damage hitbox
+        m.vel.y = 30                                                 -- Initial upward velocity
+        m.marioObj.hitboxRadius = 100                                -- Damage hitbox
 
         -- Spawn the spin effect
         spawn_non_sync_object(id_bhvSpinAttack, E_MODEL_SPIN_ATTACK, m.pos.x, m.pos.y, m.pos.z,
-        function (o)
-            o.parentObj = m.marioObj
-            o.globalPlayerIndex = m.marioObj.globalPlayerIndex
-        end)
-
+            function(o)
+                o.parentObj = m.marioObj
+                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+            end)
     else
         m.marioObj.hitboxRadius = 37 -- Reset the hitbox after initial hit
     end
@@ -1230,9 +1234,10 @@ local function rosalina_before_action(m, nextAct)
     if nextAct & ACT_FLAG_AIR == 0 then
         if not p.canSpin then
             play_sound_with_freq_scale(SOUND_GENERAL_COIN_SPURT_EU, m.marioObj.header.gfx.cameraToObject, 1.6)
-            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z, function (o)
-                obj_scale(o, 0.75)
-            end)
+            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z,
+                function(o)
+                    obj_scale(o, 0.75)
+                end)
         end
         p.canGrab = false
         p.canSpin = true
@@ -1285,6 +1290,8 @@ bhvWapeachAxeList = {
 ----
 
 ACT_AXECHOP = allocate_mario_action(ACT_GROUP_STATIONARY | ACT_FLAG_STATIONARY)
+ACT_AXESPIN = allocate_mario_action(ACT_GROUP_MOVING | ACT_FLAG_MOVING | ACT_FLAG_ATTACKING)
+ACT_AXESPINAIR = allocate_mario_action(ACT_FLAG_ATTACKING | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
 
 ---@param o Object
 local function bhv_axe_attack_init(o)
@@ -1357,7 +1364,7 @@ local function bhv_axe_attack_loop(o)
                         bhvWapeachAxeList[bhv](o, o2)
                     else
                         o2.oInteractStatus = o2.oInteractStatus | ATTACK_FAST_ATTACK | INT_STATUS_WAS_ATTACKED |
-                        INT_STATUS_INTERACTED
+                            INT_STATUS_INTERACTED
                     end
                 end
             end
@@ -1387,6 +1394,7 @@ local function act_wapeach_axechop(m)
     m.faceAngle.x = slope
     m.marioObj.header.gfx.angle.x = slope
 
+
     if m.actionTimer == 0 then
         set_character_animation(m, CHAR_ANIM_BREAKDANCE)
         smlua_anim_util_set_animation(m.marioObj, 'wapeach_axechop')
@@ -1398,7 +1406,7 @@ local function act_wapeach_axechop(m)
     if m.actionTimer == 17 then
         play_sound(SOUND_OBJ_POUNDING_LOUD, m.marioObj.header.gfx.cameraToObject)
         if m.playerIndex == 0 then
-            spawn_sync_object(id_bhvAxeAttack, E_MODEL_EXCLAMATION_BOX_OUTLINE, get_hand_foot_pos_x(m, 0),
+            spawn_sync_object(id_bhvAxeAttack, E_MODEL_NONE, get_hand_foot_pos_x(m, 0),
                 get_hand_foot_pos_y(m, 0) + 25, get_hand_foot_pos_z(m, 0), function(o)
                     o.globalPlayerIndex = m.marioObj.globalPlayerIndex
                 end)
@@ -1418,10 +1426,106 @@ end
 hook_mario_action(ACT_AXECHOP, act_wapeach_axechop)
 
 ---@param m MarioState
+local function act_wapeach_axespin(m)
+    local slope = -find_floor_slope(m, 0)
+    m.faceAngle.x = slope
+    m.marioObj.header.gfx.angle.x = slope
+    m.marioBodyState.handState = 2
+
+
+    if m.actionTimer == 0 then
+        play_character_sound(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE)
+        m.forwardVel = clamp(m.forwardVel + 16, 0, 850)
+        mario_set_forward_vel(m, m.forwardVel)
+    end
+    if m.controller.buttonPressed & B_BUTTON ~= 0 then
+        m.forwardVel = clamp(m.forwardVel + 7, 0, 850)
+        mario_set_forward_vel(m, m.forwardVel)
+    end
+    m.forwardVel = m.forwardVel - 1.0
+    mario_set_forward_vel(m, m.forwardVel)
+    set_character_anim_with_accel(m, CHAR_ANIM_SLIDE_KICK, clamp(m.forwardVel * 0x500, 0, 0x1F000))
+    smlua_anim_util_set_animation(m.marioObj, 'wapeach_axespin')
+    if is_anim_past_frame(m, 1) ~= 0 then
+        play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+    end
+
+    set_mario_particle_flags(m, PARTICLE_DUST, 0);
+
+    apply_slope_accel(m)
+    if m.intendedMag > 1 then
+        m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 0x200)
+        --m.forwardVel = m.forwardVel - 0.15
+        mario_set_forward_vel(m, m.forwardVel)
+    end
+    local step = perform_ground_step(m)
+    if m.forwardVel < 15 and m.actionTimer >= 15 then
+        set_mario_action(m, ACT_THROWN_FORWARD, 0)
+        return
+    end
+    if m.forwardVel >= 100 and m.actionState == 0 then
+        play_character_sound(m, CHAR_SOUND_TWIRL_BOUNCE)
+        m.actionState = 1
+    end
+    if step == GROUND_STEP_HIT_WALL then
+        mario_bonk_reflection(m, 1)
+        set_mario_action(m, ACT_THROWN_BACKWARD, 0)
+    end
+    if step == GROUND_STEP_LEFT_GROUND then
+        set_mario_action(m, ACT_AXESPINAIR, 0)
+    end
+
+    m.actionTimer = m.actionTimer + 1
+end
+hook_mario_action(ACT_AXESPIN, act_wapeach_axespin)
+
+local function act_wapeach_axespin_air(m)
+    update_air_with_turn(m)
+    m.vel.y = m.vel.y + 2
+    m.marioBodyState.handState = 2
+    m.forwardVel = m.forwardVel - 0.7
+    mario_set_forward_vel(m, m.forwardVel)
+    set_character_anim_with_accel(m, CHAR_ANIM_SLIDE_KICK, clamp(m.forwardVel * 0x500, 0, 0x1F000))
+    smlua_anim_util_set_animation(m.marioObj, 'wapeach_axespin')
+    if is_anim_past_frame(m, 1) ~= 0 then
+        play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+    end
+
+
+    if m.intendedMag > 1 then
+        m.faceAngle.y = approach_s16_symmetric(m.faceAngle.y, m.intendedYaw, 0x200)
+    end
+
+
+    local step = perform_air_step(m, 0)
+    if m.forwardVel < 15 and m.actionTimer >= 10 then
+        set_mario_action(m, ACT_THROWN_FORWARD, 0)
+        return
+    end
+    if m.forwardVel >= 100 and m.actionState == 0 then
+        play_character_sound(m, CHAR_SOUND_TWIRL_BOUNCE)
+        m.actionState = 1
+    end
+    if step == AIR_STEP_LANDED then
+        set_mario_action(m, ACT_AXESPIN, 0)
+    end
+    if step == AIR_STEP_HIT_WALL then
+        mario_bonk_reflection(m, 1)
+        set_mario_action(m, ACT_THROWN_BACKWARD, 0)
+    end
+
+    m.actionTimer = m.actionTimer + 1
+end
+hook_mario_action(ACT_AXESPINAIR, act_wapeach_axespin_air)
+
+---@param m MarioState
 ---@param incomingAct integer
 local function wapeach_before_action(m, incomingAct)
     if (incomingAct == ACT_PUNCHING or incomingAct == ACT_MOVE_PUNCHING) and m.controller.buttonDown & Z_TRIG ~= 0 then
         return ACT_AXECHOP
+    end
+    if (incomingAct == ACT_SLIDE_KICK) then
+        return ACT_AXESPIN
     end
 end
 
@@ -1429,15 +1533,15 @@ end
 ---  Main  --
 -------------
 local function on_character_select_load()
-    local CT_TOADETTE  = extraCharacters[1].tablePos
-    local CT_PEACH     = extraCharacters[2].tablePos
-    local CT_DAISY     = extraCharacters[3].tablePos
-    local CT_YOSHI     = extraCharacters[4].tablePos
-    local CT_BIRDO     = extraCharacters[5].tablePos
-    local CT_PAULINE   = extraCharacters[7].tablePos
-    local CT_ROSALINA  = extraCharacters[8].tablePos
-    local CT_WAPEACH = extraCharacters[9].tablePos
-    
+    local CT_TOADETTE = extraCharacters[1].tablePos
+    local CT_PEACH    = extraCharacters[2].tablePos
+    local CT_DAISY    = extraCharacters[3].tablePos
+    local CT_YOSHI    = extraCharacters[4].tablePos
+    local CT_BIRDO    = extraCharacters[5].tablePos
+    local CT_PAULINE  = extraCharacters[7].tablePos
+    local CT_ROSALINA = extraCharacters[8].tablePos
+    local CT_WAPEACH  = extraCharacters[9].tablePos
+
     -- Toadette
     _G.charSelect.character_hook_moveset(CT_TOADETTE, HOOK_MARIO_UPDATE, toadette_update)
     _G.charSelect.character_hook_moveset(CT_TOADETTE, HOOK_ON_SET_MARIO_ACTION, toadette_on_set_action)
@@ -1470,7 +1574,6 @@ local function on_character_select_load()
     -- Wapeach
     _G.charSelect.character_hook_moveset(CT_WAPEACH, HOOK_BEFORE_SET_MARIO_ACTION, wapeach_before_action)
     hook_event(HOOK_ALLOW_INTERACT, allow_interact) -- dont moveset hook this
-
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
