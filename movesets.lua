@@ -1428,12 +1428,9 @@ hook_mario_action(ACT_AXECHOP, act_wapeach_axechop)
 
 ---@param m MarioState
 local function act_wapeach_axespin(m)
-    local slope = -find_floor_slope(m, 0)
-    m.faceAngle.x = slope
-    m.marioObj.header.gfx.angle.x = slope
+
+    
     m.marioBodyState.handState = 2
-
-
     if m.actionTimer == 0 then
         play_character_sound(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE)
         m.forwardVel = clamp(m.forwardVel + 21, 0, 850)
@@ -1459,6 +1456,11 @@ local function act_wapeach_axespin(m)
         --m.forwardVel = m.forwardVel - 0.15
         mario_set_forward_vel(m, m.forwardVel)
     end
+    local gfx = m.marioObj.header.gfx
+    local floorAngle = atan2s(m.floor.normal.z, m.floor.normal.x)
+    local floorSlope = radians_to_sm64(math.acos(m.floor.normal.y))
+    gfx.angle.x = floorSlope * coss(floorAngle - m.faceAngle.y)
+    gfx.angle.z = floorSlope * -sins(floorAngle - m.faceAngle.y)
     local step = perform_ground_step(m)
     if m.forwardVel < 20 and m.actionTimer >= 15 then
         set_mario_action(m, ACT_AXESPINDIZZY, 0)
@@ -1484,6 +1486,7 @@ local function act_wapeach_axespin_air(m)
     update_air_with_turn(m)
     m.vel.y = m.vel.y + 2
     m.marioBodyState.handState = 2
+    m.forwardVel = clamp(m.forwardVel - 0.7, 0, 21)
     m.forwardVel = m.forwardVel - 0.7
     mario_set_forward_vel(m, m.forwardVel)
     set_character_anim_with_accel(m, CHAR_ANIM_SLIDE_KICK, clamp(m.forwardVel * 0x500, 0, 0x1F000))
@@ -1521,28 +1524,39 @@ hook_mario_action(ACT_AXESPINAIR, act_wapeach_axespin_air)
 
 local function act_wapeach_axespin_dizzy(m)
     m.marioBodyState.handState = 2
+    
     if m.actionTimer == 0 then
         play_character_sound(m, CHAR_SOUND_WHOA)
     end
     if m.actionTimer >= 42 then
+        m.marioBodyState.eyeState = MARIO_EYES_DEAD
         set_character_animation(m, CHAR_ANIM_LAND_ON_STOMACH)
         smlua_anim_util_set_animation(m.marioObj, 'wapeach_flop')
         if m.actionTimer == 52 then
         play_sound(SOUND_ACTION_PAT_BACK, m.marioObj.header.gfx.cameraToObject)
         play_character_sound(m, CHAR_SOUND_OOOF2)
         end
-        if m.actionTimer >= 52 then
-            set_mario_particle_flags(m, PARTICLE_DUST, 0);
-            play_sound(SOUND_AIR_ROUGH_SLIDE, m.marioObj.header.gfx.cameraToObject)
-        end
+        if m.actionTimer > 52 and m.actionTimer < 111 then
+            m.forwardVel = m.forwardVel-0.3
+            mario_set_forward_vel(m, m.forwardVel)
+            if m.forwardVel <= 0 then
+                m.forwardVel = 0
+                mario_set_forward_vel(m, m.forwardVel)
+            else 
+                set_mario_particle_flags(m, PARTICLE_DUST, 0);
+                play_sound(SOUND_AIR_ROUGH_SLIDE, m.marioObj.header.gfx.cameraToObject)
+            end
 
-        if m.actionTimer >= 111 then
+        else if m.actionTimer >= 111 then
             m.forwardVel = 0
             mario_set_forward_vel(m, m.forwardVel)
+            if m.controller.buttonPressed & B_BUTTON ~= 0 or m.controller.buttonPressed & A_BUTTON ~= 0 then
             set_mario_action(m, ACT_FORWARD_ROLLOUT, 0)
+            end
         end
+    end
     else
-        m.forwardVel = m.forwardVel - 0.2
+        m.forwardVel = clamp(m.forwardVel, 0, 21)
         mario_set_forward_vel(m, m.forwardVel)
         if is_anim_past_frame(m, 1) ~= 0 then
             play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
@@ -1550,7 +1564,12 @@ local function act_wapeach_axespin_dizzy(m)
     set_character_animation(m, CHAR_ANIM_BREAKDANCE)
     smlua_anim_util_set_animation(m.marioObj, 'wapeach_dizzy')
     end
-
+    apply_slope_accel(m)
+    local gfx = m.marioObj.header.gfx
+    local floorAngle = atan2s(m.floor.normal.z, m.floor.normal.x)
+    local floorSlope = radians_to_sm64(math.acos(m.floor.normal.y))
+    gfx.angle.x = floorSlope * coss(floorAngle - m.faceAngle.y)
+    gfx.angle.z = floorSlope * -sins(floorAngle - m.faceAngle.y)
     local step = perform_ground_step(m)
     if step == GROUND_STEP_LEFT_GROUND then
         set_mario_action(m, ACT_THROWN_FORWARD, 0)
