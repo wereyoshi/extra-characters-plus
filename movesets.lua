@@ -1559,16 +1559,21 @@ local id_bhvDizzyCircle = hook_behavior(nil, OBJ_LIST_GENACTOR, true, bhv_dizzyc
 
 
 local function act_wapeach_axespin_dizzy(m)
+    if m.playerIndex == 0 then
     m.marioBodyState.handState = 2
+    end
 
     if m.actionTimer == 0 then
         play_character_sound(m, CHAR_SOUND_WHOA)
                 -- Spawn the spin effect
+                if m.playerIndex == 0 then
+
                 spawn_non_sync_object(id_bhvDizzyCircle, E_MODEL_DIZZYCIRCLE, m.marioBodyState.headPos.x, m.marioBodyState.headPos.y, m.marioBodyState.headPos.z,
                 function(o)
                     o.parentObj = m.marioObj
                     o.globalPlayerIndex = m.marioObj.globalPlayerIndex
                 end)
+            end
     end
     if m.actionTimer >= 42 then
         m.marioBodyState.eyeState = MARIO_EYES_DEAD
