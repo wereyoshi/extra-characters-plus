@@ -1,7 +1,8 @@
--- name: \\#ff0000\\[CS] Extra Characters
--- description: [CS] Extra Characters v11.0\nBy: \\#00ff00\\ULTRA BROS TEAM\n\n\\#ffff00\\Ultra Bros Team:\n\\#ffffff\\AngelicMiracles\nMelzinoff\nFluffaMario\nSharen\nSquishy\n\n\\#f54e59\\Characters:\n\\#ffffff\\Toadette\nPeach\nDaisy\nYoshi\nBirdo\nForeman Spike\nPauline\nDonkey Kong\nRosalina\nWaPeach\nSonic.
+-- name: [CS] Extra Characters DEV
+-- description: [CS] Extra Characters Dev version\nBy: \\#00ff00\\ULTRA BROS TEAM\n\n\\#ffff00\\Ultra Bros Team:\n\\#ffffff\\FunkyLion\nMelzinoff\nFluffaMario\nSharen\nSquishy\n\n\\#f54e59\\Characters:\n\\#ffffff\\Toadette\nPeach\nDaisy\nYoshi\nBirdo\nForeman Spike\nPauline\nRosalina\nWaPeach
 
 local TEXT_PACK_NAME = "Extra Characters"
+
 if not _G.charSelectExists then
     djui_popup_create("\\#ffffa0\\Extra Characters requires\nCharacter Select to be enabled.\n\nPlease rehost with it enabled.", 4)
     return
@@ -24,10 +25,10 @@ extraCharacters = {
         camScale = 0.8,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("toadette_cap_geo"),
-            wing = smlua_model_util_get_id("toadette_wing_cap_geo"),
-            metal = smlua_model_util_get_id("toadette_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("toadette_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("toadette_cap_geo"),
+            -- wing = smlua_model_util_get_id("toadette_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("toadette_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("toadette_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xFF, g = 0xFF, b = 0xFF },
@@ -98,10 +99,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("peach_player_cap_geo"),
-            wing = smlua_model_util_get_id("peach_player_wing_cap_geo"),
-            metal = smlua_model_util_get_id("peach_player_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("peach_player_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("peach_player_cap_geo"),
+            -- wing = smlua_model_util_get_id("peach_player_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("peach_player_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("peach_player_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xFF, g = 0x50, b = 0x96 },
@@ -252,10 +253,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("daisy_cap_geo"),
-            wing = smlua_model_util_get_id("daisy_wing_cap_geo"),
-            metal = smlua_model_util_get_id("daisy_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("daisy_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("daisy_cap_geo"),
+            -- wing = smlua_model_util_get_id("daisy_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("daisy_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("daisy_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xFF, g = 0xFF, b = 0xFF },
@@ -406,10 +407,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("yoshi_player_cap_geo"),
-            wing = smlua_model_util_get_id("yoshi_player_wing_cap_geo"),
-            metal = smlua_model_util_get_id("yoshi_player_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("yoshi_player_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("yoshi_player_cap_geo"),
+            -- wing = smlua_model_util_get_id("yoshi_player_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("yoshi_player_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("yoshi_player_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xFF, g = 0x00, b = 0x00 },
@@ -479,10 +480,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("birdo_cap_geo"),
-            wing = smlua_model_util_get_id("birdo_wing_cap_geo"),
-            metal = smlua_model_util_get_id("birdo_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("birdo_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("birdo_cap_geo"),
+            -- wing = smlua_model_util_get_id("birdo_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("birdo_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("birdo_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xFF, g = 0x00, b = 0x00 }, --FF0000
@@ -557,10 +558,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("foreman_spike_cap_geo"),
-            wing = smlua_model_util_get_id("foreman_spike_wing_cap_geo"),
-            metal = smlua_model_util_get_id("foreman_spike_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("foreman_spike_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("foreman_spike_cap_geo"),
+            -- wing = smlua_model_util_get_id("foreman_spike_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("foreman_spike_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("foreman_spike_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0x00, g = 0x00, b = 0xFF }, -- 0000FF
@@ -630,10 +631,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("pauline_cap_geo"),
-            wing = smlua_model_util_get_id("pauline_wing_cap_geo"),
-            metal = smlua_model_util_get_id("pauline_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("pauline_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("pauline_cap_geo"),
+            -- wing = smlua_model_util_get_id("pauline_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("pauline_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("pauline_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0xCF, g = 0x42, b = 0x39 }, -- CF4239
@@ -783,10 +784,10 @@ extraCharacters = {
         camScale = 1.1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("rosalina_cap_geo"),
-            wing = smlua_model_util_get_id("rosalina_wing_cap_geo"),
-            metal = smlua_model_util_get_id("rosalina_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("rosalina_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("rosalina_cap_geo"),
+            -- wing = smlua_model_util_get_id("rosalina_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("rosalina_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("rosalina_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0x8F, g = 0xEF, b = 0xF6 }, -- 8FEFF6
@@ -937,10 +938,10 @@ extraCharacters = {
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("wapeach_cap_geo"),
-            wing = smlua_model_util_get_id("wapeach_wing_cap_geo"),
-            metal = smlua_model_util_get_id("wapeach_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("wapeach_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("wapeach_cap_geo"),
+            -- wing = smlua_model_util_get_id("wapeach_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("wapeach_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("wapeach_metal_wing_cap_geo")
         },
         palette = {
             [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
@@ -996,15 +997,18 @@ extraCharacters = {
             --[CHAR_SOUND_HELLO] = "wapeach_hello.ogg"
         },
     },
+    -----------------
+    -- Donkey Kong --
+    -----------------
     {
         name = "Donkey Kong",
-        description = "An ape who is the King of Swing and would trample anyone who gets in the way of his love for bananas! He is the son of Cranky Kong, the ORIGINAL DK who has fought with Mario! The DK bloodline still dukes out with the heroic plumber!",
+        description = "King of the Apes! Son of the original Donkey Kong who battled Mario in the arcades. No matter which generation, the beef continues!",
         credits = "Coop Team / VA: Tom Schalk",
-        color = {r = 128, g = 40, b = 32},
-        model = smlua_model_util_get_id("dk_geo"),
+        color = {r = 255, g = 129, b = 69},
+        model = smlua_model_util_get_id("dk_geo")--[[smlua_model_util_get_id("dk_geo")]],
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-dk"),
-        camScale = 1.1,
+        camScale = 1.2,
         offset = 0,
         caps = {
             normal = smlua_model_util_get_id("dk_cap_geo"),
@@ -1013,14 +1017,14 @@ extraCharacters = {
             metalWing = smlua_model_util_get_id("dk_metal_wing_cap_geo")
         },
         palette = {
-            [PANTS]  = { r = 0xFF, g = 0x00, b = 0x00 }, -- FF0000
-            [SHIRT]  = { r = 0x83, g = 0x1E, b = 0x14 }, -- 831E14
-            [GLOVES] = { r = 0xFE, g = 0xC1, b = 0x79 }, -- FEC179
-            [SHOES]  = { r = 0xFE, g = 0xC1, b = 0x79 }, -- FEC179
-            [HAIR]   = { r = 0x00, g = 0x00, b = 0x00 }, -- Unused
-            [SKIN]   = { r = 0xFE, g = 0xC1, b = 0x79 }, -- FEC179
-            [CAP]    = { r = 0x83, g = 0x1E, b = 0x14 }, -- 831E14
-            [EMBLEM] = { r = 0xFF, g = 0xFF, b = 0x00 }  -- FFFF00
+            [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
+            [SHIRT]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
+            [GLOVES] = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
+            [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
+            [HAIR]   = { r = 0xFF, g = 0x81, b = 0x45 }, -- FF8145
+            [SKIN]   = { r = 0xBF, g = 0x94, b = 0x68 }, -- BF9468
+            [CAP]    = { r = 0xEF, g = 0xCA, b = 0x11 }, -- EFCA11
+            [EMBLEM] = { r = 0xFF, g = 0x00, b = 0x00 }  -- FF0000
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = "dk_attacked.ogg",
@@ -1124,36 +1128,36 @@ extraCharacters = {
             [CHAR_ANIM_WALK_PANTING] = 'donkey_ba_walk_panting',
             [CHAR_ANIM_STAND_UP_FROM_LAVA_BOOST] = 'donkey_28_standup_from_lava_boost',
             [CHAR_ANIM_FIRE_LAVA_BURN] = 'donkey_29_fire_lave_burn',
-            }
+        },
     },
-    -----------
+    -------------
     -- Sonic --
-    -----------
+    -------------
     {
         name = "Sonic",
-        description = "The blue blur himself! Starting at South Island, Sonic butts heads with the evil Dr. Eggman to stop him from turning Sonic's friends into robots! But what is Sonic doing here?!!",
-        credits = "Coop Team / VA: ReeseiMental",
+        description = "Who is this?! A Princess Peach imposter?! A very angsty girl who holds a very large axe for neferious purposes! How did she get here?! And why?",
+        credits = "Coop Team / VA: SlashOLantern",
         color = {r = 0, g = 0, b = 255},
         model = smlua_model_util_get_id("sonic_geo"),
         forceChar = CT_MARIO,
-        lifeIcon = get_texture_info("icon-sonic"),
+        lifeIcon = gTextures.coin,
         camScale = 1,
         offset = 0,
         caps = {
-            normal = smlua_model_util_get_id("sonic_cap_geo"),
-            wing = smlua_model_util_get_id("sonic_wing_cap_geo"),
-            metal = smlua_model_util_get_id("sonic_metal_cap_geo"),
-            metalWing = smlua_model_util_get_id("sonic_metal_wing_cap_geo")
+            -- normal = smlua_model_util_get_id("sonic_cap_geo"),
+            -- wing = smlua_model_util_get_id("sonic_wing_cap_geo"),
+            -- metal = smlua_model_util_get_id("sonic_metal_cap_geo"),
+            -- metalWing = smlua_model_util_get_id("sonic_metal_wing_cap_geo")
         },
         palette = {
-            [PANTS]  = { r = 0x00, g = 0x00, b = 0xFF }, -- 0000FF
-            [SHIRT]  = { r = 0x56, g = 0x8E, b = 0xFF }, -- 568EFF
-            [GLOVES] = { r = 0xFF, g = 0xFF, b = 0x00 }, -- FFFF00
-            [SHOES]  = { r = 0xE0, g = 0xAB, b = 0x2A }, -- E0AB2A
-            [HAIR]   = { r = 0x00, g = 0x00, b = 0x00 }, -- 000000
-            [SKIN]   = { r = 0xFE, g = 0xC1, b = 0x79 }, -- FEC179
-            [CAP]    = { r = 0x56, g = 0x8E, b = 0xFF }, -- 568EFF
-            [EMBLEM] = { r = 0xFF, g = 0xFF, b = 0x00 }  -- FFFF00
+            [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+            [SHIRT]  = { r = 0xfe, g = 0xc1, b = 0x79 }, -- FEC179
+            [GLOVES] = { r = 0xff, g = 0xff, b = 0xff }, -- FFFFFF
+            [SHOES]  = { r = 0xff, g = 0x00, b = 0x00 }, -- FF0000
+            [HAIR]   = { r = 0xFF, g = 0x81, b = 0x45 }, -- Unused
+            [SKIN]   = { r = 0xfe, g = 0xc1, b = 0x79 }, -- FEC179
+            [CAP]    = { r = 0x00, g = 0x00, b = 0xff }, -- 0000FF
+            [EMBLEM] = { r = 0x00, g = 0x00, b = 0xff }, -- 0000FF
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = "sonic_attacked.ogg",
@@ -1196,24 +1200,45 @@ extraCharacters = {
             [CHAR_SOUND_YAWNING] = "sonic_yawning.ogg",
             [CHAR_SOUND_YAHOO_WAHA_YIPPEE] = { "sonic_yahoo.ogg", "sonic_yahoo1.ogg", "sonic_yahoo2.ogg", "sonic_yahoo3.ogg", "sonic_yahoo4.ogg", "sonic_yahoo5.ogg" },
             [CHAR_SOUND_YAH_WAH_HOO] = { "sonic_yah_wah_hoo1.ogg", "sonic_yah_wah_hoo2.ogg", "sonic_yah_wah_hoo3.ogg"},
-            [CHAR_SOUND_HELLO] = "sonic_hello.ogg"
+            --[CHAR_SOUND_HELLO] = "sonic_hello.ogg"
         },
+        anims = {
+            [CHAR_ANIM_RUNNING] = 'sonic_running',
+            [CHAR_ANIM_IDLE_HEAD_CENTER] = 'sonic_idle_head_center',
+            [CHAR_ANIM_IDLE_HEAD_LEFT] = 'sonic_idle_head_left',
+            [CHAR_ANIM_IDLE_HEAD_RIGHT] = 'sonic_idle_head_right',
+            [CHAR_ANIM_SKID_ON_GROUND] = 'sonic_skid',
+            [CHAR_ANIM_STOP_SKID] = 'sonic_skid_stop',
+            [CHAR_ANIM_SHIVERING_RETURN_TO_IDLE] = 'sonic_shivering_stop',
+            [CHAR_ANIM_STAND_UP_FROM_LAVA_BOOST] = 'sonic_lava_boost_landing',
+            [CHAR_ANIM_BACKWARD_KB] = 'sonic_hard_backward_knockback',
+            [CHAR_ANIM_FORWARD_KB] = 'sonic_hard_forward_knockback',
+            [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'sonic_star_exit_with_hat',
+            [CHAR_ANIM_PUT_CAP_ON] = 'sonic_putting_on_hat',
+            [CHAR_ANIM_SLOW_LEDGE_GRAB] = 'sonic_ledge_up',
+            [CHAR_ANIM_FAST_LEDGE_GRAB] = 'sonic_quick_ledge_get_up',
+            [CHAR_ANIM_LAND_FROM_DOUBLE_JUMP] = 'sonic_doublejump_landing',
+            [CHAR_ANIM_LAND_FROM_SINGLE_JUMP] = 'sonic_singlejump_landing',
+            [CHAR_ANIM_SLOW_LAND_FROM_DIVE] = 'sonic_stop_sliding', 
+            [CHAR_ANIM_SHIVERING_WARMING_HAND] = "sonic_shivering",
+            [CHAR_ANIM_AIR_KICK] = "sonic_air_kick",
+        }
     },
 }
 
 local TEXT_VOICE_ACTOR = " (Voice Actors)"
 local TEXT_MOVESET     = " (Movesets)"
+
 local CSloaded = false
 local function on_character_select_load()
     for i = 1, #extraCharacters do
         local char = extraCharacters[i]
-        local tablePos = _G.charSelect.character_add(char.name, char.description, char.credits, char.color, char.model, char.forceChar, char.lifeIcon, char.camScale)
-        char.tablePos = tablePos
-        if char.caps then _G.charSelect.character_add_caps(char.model, char.caps) end
+        char.tablePos = _G.charSelect.character_add(char.name, char.description, char.credits, char.color, char.model, char.forceChar, char.lifeIcon, char.camScale, char.offset, char.meter)
+        -- if char.caps then _G.charSelect.character_add_caps(char.model, char.caps) end
         if char.voices then _G.charSelect.character_add_voice(char.model, char.voices) end
         if char.palette then _G.charSelect.character_add_palette_preset(char.model, char.palette) end
         if char.anims then _G.charSelect.character_add_animations(char.model, char.anims) end
-        _G.charSelect.character_set_category(tablePos, "CoopDX")
+        -- if char.meter then _G.charSelect.character_add_health_meter(char.model, char.meter) end
     end
 
     _G.charSelect.credit_add(TEXT_PACK_NAME, "FunkyLion", "Lead Dev")
@@ -1231,10 +1256,7 @@ local function on_character_select_load()
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "LuUvvUCY", "Birdo")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "VinnyVinesauce", "Spike")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "BeckyVO", "Pauline")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "Tom Schalk", "Donkey Kong")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "GauntletQueen", "Rosalina")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "SlashOLantern", "WaPeach")
-    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_VOICE_ACTOR, "ReeseiMental", "Sonic")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "xLuigiGamerx", "Toadette")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Peach")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Daisy")
@@ -1242,6 +1264,7 @@ local function on_character_select_load()
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "EmilyEmmi", "Birdo")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "PeachyPeach", "Pauline")
     _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Wibblus", "Rosalina")
+    _G.charSelect.credit_add(TEXT_PACK_NAME..TEXT_MOVESET, "Melzinoff", "WaPeach")
 
     CSloaded = true
 end
@@ -1253,9 +1276,11 @@ local function on_character_sound(m, sound)
     end
 end
 
+--Used for the final Extra Character
+
 local function mario_update(m)
     if not CSloaded then return end
-    if m.action == ACT_WALKING and (_G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos or _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[9].tablePos) then
+    if m.action == ACT_WALKING and _G.charSelect.character_get_current_number(m.playerIndex) == extraCharacters[10].tablePos then
         m.marioBodyState.torsoAngle.x = 0
         m.marioBodyState.torsoAngle.z = 0
         --results in double step sounds when going at the usual 32 speed (sigh)
