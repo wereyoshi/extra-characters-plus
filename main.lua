@@ -1017,14 +1017,14 @@ extraCharacters = {
             metalWing = smlua_model_util_get_id("dk_metal_wing_cap_geo")
         },
         palette = {
-            [PANTS]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
-            [SHIRT]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
+            [PANTS]  = { r = 0xff, g = 0x00, b = 0x00 }, -- FF0000
+            [SHIRT]  = { r = 0x83, g = 0x1e, b = 0x14 }, -- 831E14
             [GLOVES] = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
-            [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- 6C3AAC
-            [HAIR]   = { r = 0xFF, g = 0x81, b = 0x45 }, -- FF8145
-            [SKIN]   = { r = 0xBF, g = 0x94, b = 0x68 }, -- BF9468
-            [CAP]    = { r = 0xEF, g = 0xCA, b = 0x11 }, -- EFCA11
-            [EMBLEM] = { r = 0xFF, g = 0x00, b = 0x00 }  -- FF0000
+            [SHOES]  = { r = 0x6C, g = 0x3A, b = 0xAC }, -- Unused
+            [HAIR]   = { r = 0x83, g = 0x1e, b = 0x14 }, -- 831E14
+            [SKIN]   = { r = 0xfe, g = 0xc1, b = 0x79 }, -- fec179
+            [CAP]    = { r = 0x83, g = 0x1e, b = 0x14 }, -- 831E14
+            [EMBLEM] = { r = 0xFF, g = 0xe9, b = 0x00 }  -- FFE900
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = "dk_attacked.ogg",
