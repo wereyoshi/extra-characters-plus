@@ -1006,13 +1006,8 @@ extraCharacters = {
         name = "Donkey Kong",
         description = "King of the Apes! Son of the original Donkey Kong who battled Mario in the arcades. No matter which generation, the beef continues!",
         credits = "Coop Team / VA: Tom Schalk",
-<<<<<<< HEAD
         color = {r = 131, g = 30, b = 20},
         model = smlua_model_util_get_id("dk_geo")--[[smlua_model_util_get_id("dk_geo")]],
-=======
-        color = {r = 255, g = 129, b = 69},
-        model = smlua_model_util_get_id("dk_geo"),
->>>>>>> 3c698c44e39f03607cb6d0747f949f91db661838
         forceChar = CT_MARIO,
         lifeIcon = get_texture_info("icon-dk"),
         camScale = 1.2,
