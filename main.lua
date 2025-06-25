@@ -1227,6 +1227,7 @@ extraCharacters = {
                 [CHAR_ANIM_SLOW_LAND_FROM_DIVE] = 'sonic_stop_sliding', 
                 [CHAR_ANIM_SHIVERING_WARMING_HAND] = "sonic_shivering",
                 [CHAR_ANIM_AIR_KICK] = "sonic_air_kick",
+                [CHAR_ANIM_RUNNING_UNUSED] = "sonic_running3",
             },
             normal = {
                 [CHAR_ANIM_TAKE_CAP_OFF_THEN_ON] = 'sonic_star_exit_with_hat',
