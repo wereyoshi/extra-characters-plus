@@ -41,6 +41,7 @@ for i = 0, (MAX_PLAYERS - 1) do
     -- Sonic
     e.spinCharge = 0
     e.groundYVel = 0
+    e.lastForwardVel = 0
 end
 
 local princessFloatActs = {
@@ -1926,18 +1927,28 @@ local function update_spin_dash_angle(m, accel, lossFactor)
 
     m.slideYaw = atan2s(m.slideVelZ, m.slideVelX)
 
-    facingDYaw = limit_angle(m.faceAngle.y - m.slideYaw)
+    facingDYaw =limit_angle(m.faceAngle.y - m.slideYaw)
     newFacingDYaw = facingDYaw
 
     --! -0x4000 not handled - can slide down a slope while facing perpendicular to it
-    if newFacingDYaw > 0 and newFacingDYaw <= 0x8000 then
-        newFacingDYaw = newFacingDYaw - 0x800
-        if newFacingDYaw < 0 then newFacingDYaw = 0 end
+    
+    if (newFacingDYaw > 0 and newFacingDYaw <= 0x4000) then
+        newFacingDYaw = newFacingDYaw - 0x200
+        if (newFacingDYaw < 0) then newFacingDYaw = 0 end
 
-    elseif newFacingDYaw >= -0x8000 and newFacingDYaw < 0 then
-        newFacingDYaw = newFacingDYaw + 0x800
-        if newFacingDYaw > 0 then newFacingDYaw = 0 end
+    elseif (newFacingDYaw > -0x4000 and newFacingDYaw < 0) then
+        newFacingDYaw = newFacingDYaw + 0x200
+        if (newFacingDYaw > 0) then newFacingDYaw = 0 end
+        
+    elseif (newFacingDYaw > 0x4000 and newFacingDYaw < 0x8000) then
+        newFacingDYaw = newFacingDYaw + 0x200
+        if (newFacingDYaw > 0x8000) then newFacingDYaw = 0x8000 end
+        
+    elseif (newFacingDYaw > -0x8000 and newFacingDYaw < -0x4000) then
+        newFacingDYaw = newFacingDYaw - 0x200
+        if (newFacingDYaw < -0x8000) then newFacingDYaw = -0x8000 end
     end
+
 
     m.faceAngle.y = m.slideYaw + newFacingDYaw
 
@@ -1948,9 +1959,8 @@ local function update_spin_dash_angle(m, accel, lossFactor)
     mario_update_moving_sand(m)
     mario_update_windy_ground(m)
 
-    --! Speed is capped a frame late (butt slide HSG)
     m.forwardVel = math.sqrt(m.slideVelX ^ 2 + m.slideVelZ ^2)
-    if m.forwardVel > 100.0 then -- might remove
+    if m.forwardVel > 100.0 then -- still dunno what we should be replacin' this with
         m.slideVelX = m.slideVelX * 100.0 / m.forwardVel
         m.slideVelZ = m.slideVelZ * 100.0 / m.forwardVel
     end
@@ -1995,7 +2005,7 @@ function update_spin_dashing(m, stopSpeed)
         m.slideVelZ = m.slideVelZ * oldSpeed / newSpeed
     end
 
-    update_sliding_angle(m, accel, lossFactor)
+    update_spin_dash_angle(m, accel, lossFactor)
 
     if (m.playerIndex == 0 and mario_floor_is_slope(m) == 0 and math.abs(m.forwardVel) < stopSpeed) then
         mario_set_forward_vel(m, 0.0)
@@ -2094,9 +2104,9 @@ end
 
 function set_sonic_jump_vel(m, jumpForce, initialVelY)
     local velY = 0
-	
-	if initialVelY ~= nil then velY = initialVelY end
-	
+    
+    if initialVelY ~= nil then velY = initialVelY end
+    
     m.vel.x = m.vel.x + jumpForce * m.floor.normal.x
     m.vel.z = m.vel.z + jumpForce * m.floor.normal.z
 
@@ -2111,7 +2121,7 @@ end
 
 CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
 
-local function sonic_anim_and_audio_for_walk(m, walkCap, runCap)
+local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
 
     local val14 = 0
     local marioObj = m.marioObj
@@ -2175,9 +2185,7 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, runCap)
                 elseif (val04 > walkCap) then
                     m.actionTimer = 3
                 else
-                    -- (Speed Crash) If Mario's speed is more than 2^17.
-                    val14 = (val04 / 4.0 * 0x10000)
-                    set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, val14)
+                    set_mario_anim_with_accel(m, MARIO_ANIM_WALKING, 4.0 * 0x10000)
                     play_step_sound(m, 10, 49)
 
                     val0C = false
@@ -2186,13 +2194,12 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, runCap)
                 if (val04 <= walkCap) then
                     m.actionTimer = 2
                 else
-                    -- (Speed Crash) If Mario's speed is more than 2^17.
                     if m.forwardVel > runCap then
-                        val14 = (val04 / 3.0 * 0x10000)
-                        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING_UNUSED, val14)
+                        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING_UNUSED, 16.0 * 0x10000)
+                    elseif m.forwardVel > jogCap then
+                        play_custom_anim(m, CUSTOM_CHAR_ANIM_SONIC_RUN, 5.0)
                     else
-                        val14 = (val04 / 4.0 * 0x10000)
-                        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, val14)
+                        set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 5.0 * 0x10000)
                     end
                     play_step_sound(m, 9, 45)
                     targetPitch = tilt_body_running(m)
@@ -2229,19 +2236,20 @@ local sonicActionOverride = {
 
 ---@param m MarioState
 local function act_spin_jump(m)
-    local spinSpeed =  math.max(0.5, m.forwardVel / 32)
 
+    local e = gStateExtras[m.playerIndex]
     if m.actionTimer == 0 then
         audio_sample_play(SOUND_SPIN_JUMP, m.pos, 1)
+        e.lastForwardVel = m.forwardVel
     end
 
-    m.vel.y = math.max(m.vel.y - 2, -75)
+    local spinSpeed =  math.max(0.5, e.lastForwardVel / 32)
 
     set_character_animation(m, CHAR_ANIM_A_POSE)
     
     local stepResult = perform_air_step(m, 0)
     sonic_update_air(m)
-	
+    
     if stepResult ~= AIR_STEP_NONE then
         m.faceAngle.x = 0
         if stepResult == AIR_STEP_LANDED then
@@ -2258,6 +2266,7 @@ local function act_spin_jump(m)
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
         if stepResult == AIR_STEP_LANDED then
+            audio_sample_play(SOUND_ROLL, m.pos, 1)
             set_mario_action(m, ACT_SPIN_DASH, 0)
         elseif (m.controller.buttonPressed & B_BUTTON) ~= 0 then
             return set_mario_action(m, ACT_GROUND_POUND, 0)
@@ -2302,6 +2311,8 @@ end
 ---@param m MarioState
 local function act_spin_dash(m)
 
+    local e = gStateExtras[m.playerIndex]
+
     if (m.input & INPUT_A_PRESSED) ~= 0 then
         return set_mario_action(m, ACT_JUMP, 0)
     end
@@ -2317,11 +2328,10 @@ local function act_spin_dash(m)
             return set_mario_action(m, ACT_CROUCHING, 0)
         end
     elseif stepResult == GROUND_STEP_LEFT_GROUND then
-        return set_mario_action(m, ACT_JUMP, 0)
+        m.vel.y = e.groundYVel
+        m.action = ACT_SPIN_JUMP
     end
 
-
-    -- This ain't doin' shit. Needs to be looked into more.
     local spinPhys = update_spin_dashing(m, 3)
 
     if spinPhys ~= 0 then
@@ -2351,7 +2361,7 @@ local function act_sonic_running(m)
         set_mario_action(m, ACT_FREEFALL, 0)
         set_mario_animation(m, MARIO_ANIM_GENERAL_FALL)
     elseif stepResult == GROUND_STEP_NONE then
-        sonic_anim_and_audio_for_walk(m, 26, 54)
+        sonic_anim_and_audio_for_walk(m, 26, 44, 55)
         if (m.intendedMag - m.forwardVel) > 16 then
             set_mario_particle_flags(m, PARTICLE_DUST, false)
         end
@@ -2404,17 +2414,14 @@ local function before_set_sonic_action(m, action)
     local e = gStateExtras[m.playerIndex]
 
     if sonicActionOverride[action] then
-        if action == ACT_LONG_JUMP then
-            set_sonic_jump_vel(m, 64, e.groundYVel)
-            mario_set_forward_vel(m, 48)
-        else
-            set_sonic_jump_vel(m, 64, e.groundYVel)
-        end
+        set_sonic_jump_vel(m, 64, e.groundYVel)
         return sonicActionOverride[action]
     end
 end
 
 local function on_set_sonic_action(m)
+    local e = gStateExtras[m.playerIndex]
+
     if m.action == ACT_PUNCHING and m.actionArg == 9 then
         set_mario_action(m, ACT_SPIN_DASH_CHARGE, 0)
     end
