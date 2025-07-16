@@ -1960,9 +1960,9 @@ local function update_spin_dash_angle(m, accel, lossFactor)
     mario_update_windy_ground(m)
 
     m.forwardVel = math.sqrt(m.slideVelX ^ 2 + m.slideVelZ ^2)
-    if m.forwardVel > 100.0 then -- still dunno what we should be replacin' this with
-        m.slideVelX = m.slideVelX * 100.0 / m.forwardVel
-        m.slideVelZ = m.slideVelZ * 100.0 / m.forwardVel
+    if m.forwardVel > 256.0 then -- still dunno what we should be replacin' this with
+        m.slideVelX = m.slideVelX * 256.0 / m.forwardVel
+        m.slideVelZ = m.slideVelZ * 256.0 / m.forwardVel
     end
 
     if (newFacingDYaw < -0x4000 or newFacingDYaw > 0x4000) then
@@ -2036,6 +2036,10 @@ local function sonic_update_air(m)
         m.forwardVel = m.forwardVel * -1
     end
 
+    if m.pos.y < m.waterLevel then
+        accel = 1
+    end
+
     if (check_horizontal_wind(m)) == 0 then
 
         
@@ -2077,6 +2081,11 @@ local function update_sonic_running_speed(m)
         targetSpeed = m.intendedMag
     else
         targetSpeed = maxTargetSpeed
+    end
+    
+    if m.pos.y < m.waterLevel then
+        targetSpeed = targetSpeed / 2
+        accel = 1.025
     end
 
     if (m.quicksandDepth > 10.0) then
@@ -2197,12 +2206,11 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
                     if m.forwardVel > runCap then
                         set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING_UNUSED, 16.0 * 0x10000)
                     elseif m.forwardVel > jogCap then
-                        play_custom_anim(m, CUSTOM_CHAR_ANIM_SONIC_RUN, 5.0)
+                        play_custom_anim(m, CUSTOM_CHAR_ANIM_SONIC_RUN, 6.0)
                     else
                         set_mario_anim_with_accel(m, MARIO_ANIM_RUNNING, 5.0 * 0x10000)
                     end
                     play_step_sound(m, 9, 45)
-                    targetPitch = tilt_body_running(m)
 
                     val0C = false
                 end
@@ -2212,6 +2220,39 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
 
     --marioObj.oMarioWalkingPitch = convert_s16(approach_s32(marioObj.oMarioWalkingPitch, find_floor_slope(m, 0x8000), 0x800, 0x800))
     align_with_floor_but_better(m)
+end
+  
+function badnik_bounce(m, prevHeightInput, currentGravity)
+    local targetVel = math.sqrt(currentGravity * 2 * math.abs(prevHeightInput - m.pos.y))
+    local trueTargetVel = 0
+            
+    if targetVel ^ 2 > m.vel.y ^ 2 then
+        trueTargetVel = targetVel
+    else
+        trueTargetVel = math.abs(m.vel.y)
+    end
+  
+    if (m.action & ACT_FLAG_AIR) ~= 0 then
+        m.vel.y = trueTargetVel
+    end
+end
+
+function move_with_current(m)
+    if (m.flags & MARIO_METAL_CAP) ~= 0 then
+        return
+    end
+    local step = {
+            x = 0,
+            y = 0,
+            z = 0
+    }
+    vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
+    
+    apply_water_current(m, step)
+    
+    m.pos.x = m.pos.x + step.x
+    m.pos.y = m.pos.y + step.y
+    m.pos.z = m.pos.z + step.z
 end
 
 _G.ACT_SPIN_JUMP        = allocate_mario_action( ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING )
@@ -2223,6 +2264,9 @@ local SOUND_SPIN_JUMP = audio_sample_load("spinjump.ogg") -- Load audio sample
 local SOUND_SPIN_CHARGE = audio_sample_load("spincharge.ogg") -- Load audio sample
 local SOUND_SPIN_RELEASE = audio_sample_load("spinrelease.ogg") -- Load audio sample
 local SOUND_ROLL = audio_sample_load("spinroll.ogg") -- Load audio sample
+
+local prevVelY
+local prevHeight
 
 local sonicActionOverride = {
     [ACT_JUMP]        = ACT_SPIN_JUMP,
@@ -2254,10 +2298,12 @@ local function act_spin_jump(m)
         m.faceAngle.x = 0
         if stepResult == AIR_STEP_LANDED then
             if m.forwardVel ~= 0 then
+                set_mario_action(m, ACT_SONIC_RUNNING, 0)
                 m.faceAngle.y = atan2s(m.vel.z, m.vel.x)
                 mario_set_forward_vel(m, math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2))
+            else
+                set_mario_action(m, ACT_DOUBLE_JUMP_LAND, 0)
             end
-        set_mario_action(m, ACT_SONIC_RUNNING, 0)
         end
     else
         m.faceAngle.x = m.faceAngle.x + (0x2000 * spinSpeed)
@@ -2281,12 +2327,12 @@ local function act_spin_dash_charge(m)
 
     local e = gStateExtras[m.playerIndex]
     local MINDASH = 4
-    local MAXDASH = 256
+    local MAXDASH = 128
     local decel = (e.spinCharge / 0.32) / 512
     
     if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
         audio_sample_play(SOUND_SPIN_CHARGE, m.pos, 1)
-        e.spinCharge = math.min(e.spinCharge + 16, MAXDASH)
+        e.spinCharge = math.min(e.spinCharge + 32, MAXDASH)
     else
         e.spinCharge = approach_f32_symmetric(e.spinCharge, MINDASH, decel)
     end
@@ -2443,6 +2489,50 @@ local function sonic_update(m)
     else
         e.groundYVel = 0
     end
+
+    if (m.action & ACT_FLAG_AIR) ~= 0 and m.action ~= ACT_GROUND_POUND then
+        if m.vel.y >= 0 then
+            prevHeight = m.pos.y
+        end
+    end
+
+    if m.action == ACT_WALKING then -- Failsafe.
+        set_mario_action(m, ACT_SONIC_RUNNING, 0)
+    end
+
+    local waterActions = {
+        [ACT_WATER_PLUNGE] = true,
+        [ACT_WATER_IDLE] = true,
+        [ACT_FLUTTER_KICK] = true,
+        [ACT_SWIMMING_END] = true,
+        [ACT_WATER_ACTION_END] = true,
+        [ACT_HOLD_WATER_IDLE] = true,
+        [ACT_HOLD_WATER_JUMP] = true,
+        [ACT_HOLD_WATER_ACTION_END] = true,
+        [ACT_BREASTSTROKE] = true
+    }
+
+    if waterActions[m.action] then -- Prevent swimming in the air.
+        m.action = ACT_SPIN_JUMP
+    end
+
+    -- Drowning. Should it be added back?
+    --[[if m.pos.y < m.waterLevel then
+        m.health = m.health - 1
+        return false
+    end]]
+end
+
+local bounceTypes = {
+    [INTERACT_BOUNCE_TOP] = 1,
+    [INTERACT_BOUNCE_TOP2] = 1,
+    [INTERACT_KOOPA] = 1
+}
+
+function sonic_allow_interact(m, o, intType)
+    if bounceTypes[intType] then
+        prevVelY = m.vel.y
+    end
 end
 
 local function sonic_on_interact(m, o, intType)
@@ -2454,6 +2544,28 @@ local function sonic_on_interact(m, o, intType)
         elseif obj_has_behavior_id(o, id_bhvDoor) ~= 0 or obj_has_behavior_id(o, id_bhvStarDoor) ~= 0 then
             set_mario_action(m, ACT_DECELERATING, 0)
             interact_door(m, 0, o)
+        end
+    end
+
+    if bounceTypes[intType] and (o.oInteractionSubtype & INT_SUBTYPE_TWIRL_BOUNCE) == 0 then
+        if prevVelY < 0 and m.pos.y > o.oPosY then
+            if m.action == ACT_SPIN_JUMP then
+                o.oInteractStatus = ATTACK_FROM_ABOVE + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
+                badnik_bounce(m, prevHeight, 4)
+            end
+        end
+    end
+end
+
+local function nuh_uh_no_swimming_for_you_mf(m)
+    return false
+end
+
+local function sonic_before_phys_step(m)
+    if m.pos.y < m.waterLevel then
+        move_with_current(m)
+        if (m.action & ACT_FLAG_AIR) ~= 0 then
+            m.vel.y = m.vel.y + 2
         end
     end
 end
@@ -2522,8 +2634,11 @@ local function on_character_select_load()
     -- Sonic
     character_hook_moveset(CT_SONIC, HOOK_BEFORE_SET_MARIO_ACTION, before_set_sonic_action)
     character_hook_moveset(CT_SONIC, HOOK_ON_SET_MARIO_ACTION, on_set_sonic_action)
+    character_hook_moveset(CT_SONIC, HOOK_ALLOW_INTERACT, sonic_allow_interact)
     character_hook_moveset(CT_SONIC, HOOK_ON_INTERACT, sonic_on_interact)
+    character_hook_moveset(CT_SONIC, HOOK_ALLOW_FORCE_WATER_ACTION, nuh_uh_no_swimming_for_you_mf)
     character_hook_moveset(CT_SONIC, HOOK_MARIO_UPDATE, sonic_update)
+    character_hook_moveset(CT_SONIC, HOOK_BEFORE_PHYS_STEP, sonic_before_phys_step)
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
