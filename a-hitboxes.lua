@@ -109,7 +109,7 @@ bhvWapeachAxeAttacks = {
 
 ---@param o Object
 ---@param spAttacksList table<BehaviorId,function>
----@param getTarget boolean?
+---@param getTarget? boolean
 function obj_process_attacks(o, spAttacksList, getTarget)
     -- players
     if o.oInteractType == 0 then

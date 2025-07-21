@@ -274,8 +274,8 @@ local function act_daisy_jump(m)
 
     -- setup when action starts (vertical speed and voiceline)
     if m.actionTimer == 0 then
-        m.vel.y = m.forwardVel*0.3 + 40
-        m.forwardVel = m.forwardVel*0.7
+        m.vel.y = m.forwardVel * 0.3 + 40
+        m.forwardVel = m.forwardVel * 0.7
         play_character_sound(m, CHAR_SOUND_HELLO)
     end
 
@@ -324,7 +324,6 @@ local YOSHI_SOUND_FLUTTER = audio_sample_load("yoshi_flutter.ogg") -- Load audio
 
 ---@param m MarioState
 function act_flutter(m)
-
     -- End flutter after 1 second
     if m.actionTimer >= 30 or (m.input & INPUT_A_DOWN) == 0 then
         if m.actionTimer < 30 then
@@ -333,19 +332,20 @@ function act_flutter(m)
         return set_mario_action(m, ACT_FREEFALL, 0)
     end
 
-    local ended = common_air_action_step(m, ACT_JUMP_LAND, CHAR_ANIM_RUNNING_UNUSED, 0) ~= 0 -- Checks if the action ended earlier due to forced actions like bonking or landing
+    local ended = common_air_action_step(m, ACT_JUMP_LAND, CHAR_ANIM_RUNNING_UNUSED, 0) ~=
+    0                                                                                        -- Checks if the action ended earlier due to forced actions like bonking or landing
 
     if ended then
-        audio_sample_stop(YOSHI_SOUND_FLUTTER) -- Stop sample after landing
+        audio_sample_stop(YOSHI_SOUND_FLUTTER)           -- Stop sample after landing
     elseif m.actionTimer == 0 then
         audio_sample_play(YOSHI_SOUND_FLUTTER, m.pos, 1) -- Play audio sample
     end
 
     smlua_anim_util_set_animation(m.marioObj, YOSHI_ANIM_FLUTTER) -- Sets the animation
 
-    m.marioBodyState.eyeState = MARIO_EYES_CLOSED -- Eye State
-    m.vel.y = approach_f32(m.vel.y, m.actionTimer / 1.25, 8, 8) -- Height increases faster as the 1 second passes
-    m.marioObj.header.gfx.animInfo.animAccel = 65536 * 2 -- Animation Speed
+    m.marioBodyState.eyeState = MARIO_EYES_CLOSED                 -- Eye State
+    m.vel.y = approach_f32(m.vel.y, m.actionTimer / 1.25, 8, 8)   -- Height increases faster as the 1 second passes
+    m.marioObj.header.gfx.animInfo.animAccel = 65536 * 2          -- Animation Speed
 
     m.actionTimer = m.actionTimer + 1
     return false
@@ -365,9 +365,11 @@ hook_mario_action(ACT_FLUTTER, act_flutter)
 ---------------
 
 ACT_BIRDO_HOLD_WALKING = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_OBJECT)
-ACT_BIRDO_SPIT_EGG = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_FLAG_IDLE | ACT_FLAG_ALLOW_FIRST_PERSON | ACT_FLAG_PAUSE_EXIT)
+ACT_BIRDO_SPIT_EGG = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_FLAG_IDLE | ACT_FLAG_ALLOW_FIRST_PERSON |
+ACT_FLAG_PAUSE_EXIT)
 ACT_BIRDO_SPIT_EGG_WALK = allocate_mario_action(ACT_FLAG_MOVING | ACT_FLAG_ALLOW_FIRST_PERSON)
-ACT_BIRDO_SPIT_EGG_AIR = allocate_mario_action(ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT)
+ACT_BIRDO_SPIT_EGG_AIR = allocate_mario_action(ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION |
+ACT_FLAG_CONTROL_JUMP_HEIGHT)
 
 -- this version works more like regular walking
 ---@param m MarioState
@@ -589,7 +591,7 @@ local function act_birdo_spit_egg_walk(m)
         end
 
         mBody.torsoAngle.y = convert_s16(m.faceAngle.y - m.marioObj.header.gfx.angle.y) * 0.4
-        mBody.headAngle.y =  m.faceAngle.y - m.marioObj.header.gfx.angle.y - mBody.torsoAngle.y
+        mBody.headAngle.y = m.faceAngle.y - m.marioObj.header.gfx.angle.y - mBody.torsoAngle.y
 
         if m.intendedMag - m.forwardVel > 16 then
             set_mario_particle_flags(m, PARTICLE_DUST, false)
@@ -756,7 +758,8 @@ function bhv_birdo_egg_loop(o)
                             end
                             if doEggInteract or o2.oInteractType == INTERACT_BREAKABLE or obj_is_attackable(o2) then
                                 if obj_has_behavior_id(o2, id_bhvBowser) == 0 then
-                                    o2.oInteractStatus = o2.oInteractStatus | ATTACK_PUNCH | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
+                                    o2.oInteractStatus = o2.oInteractStatus | ATTACK_PUNCH | INT_STATUS_WAS_ATTACKED |
+                                    INT_STATUS_INTERACTED | INT_STATUS_TOUCHED_BOB_OMB
                                 end
                             end
                         elseif o.oBehParams ~= 0 and birdo_fire_is_targettable(o2, o) and dist_between_objects(o2, o) <= 700 then
@@ -941,7 +944,7 @@ function birdo_update(m)
             m.actionArg = 0
         end
 
-        local mouthPos = {x = 0, y = 0, z = 0}
+        local mouthPos = { x = 0, y = 0, z = 0 }
         local yaw = m.faceAngle.y
         local pitch = 0
         if canShoot then
@@ -964,26 +967,26 @@ function birdo_update(m)
                     mouthPos.z = m.pos.z + coss(yaw) * 80
                 end
             else
-                mouthPos.x = m.marioBodyState.headPos.x + sins(yaw+m.marioBodyState.headAngle.y) * 60
+                mouthPos.x = m.marioBodyState.headPos.x + sins(yaw + m.marioBodyState.headAngle.y) * 60
                 mouthPos.y = m.marioBodyState.headPos.y + 20
-                mouthPos.z = m.marioBodyState.headPos.z + coss(yaw+m.marioBodyState.headAngle.y) * 60
+                mouthPos.z = m.marioBodyState.headPos.z + coss(yaw + m.marioBodyState.headAngle.y) * 60
             end
         end
 
         if canShoot and e.spitTimer == 0 and e.flameCharge >= 30 and m.action & ACT_FLAG_SWIMMING == 0 then
             spawn_non_sync_object(id_bhvKoopaShellFlame, E_MODEL_RED_FLAME,
-            mouthPos.x,
-            mouthPos.y,
-            mouthPos.z,
-            function(o)
-                o.oKoopaShellFlameUnkF8 = 2
-                o.oMoveAngleYaw = math.random(0, 0xFFFF)
-                o.oVelY = math.random(1, 10)
-                o.oAnimState = math.random(1, 10)
-                o.oGravity = -4.0
-                o.oTimer = 1
-                o.oForwardVel = math.random(1, 10)
-            end)
+                mouthPos.x,
+                mouthPos.y,
+                mouthPos.z,
+                function(o)
+                    o.oKoopaShellFlameUnkF8 = 2
+                    o.oMoveAngleYaw = math.random(0, 0xFFFF)
+                    o.oVelY = math.random(1, 10)
+                    o.oAnimState = math.random(1, 10)
+                    o.oGravity = -4.0
+                    o.oTimer = 1
+                    o.oForwardVel = math.random(1, 10)
+                end)
             play_sound(SOUND_AIR_BLOW_FIRE, m.marioObj.header.gfx.cameraToObject)
         end
 
@@ -1009,16 +1012,17 @@ function birdo_update(m)
                 if m.floor and m.floor.object and m.floor.object.oForwardVel ~= 0 then
                     eggVel = eggVel + m.floor.object.oForwardVel * 2
                 end
-                spawn_sync_object(id_bhvBirdoEgg, model, mouthPos.x + sins(yaw) * 40 * coss(pitch), mouthPos.y, mouthPos.z + coss(yaw) * 40 * coss(pitch), function(o)
-                        o.oForwardVel = math.max(eggVel, 40)
-                        o.oMoveAngleYaw = yaw
-                        o.oFaceAnglePitch = pitch
-                        o.oMoveAnglePitch = pitch
-                        o.oIntangibleTimer = 100
-                        o.globalPlayerIndex = gIndex
-                        o.oBehParams = (isFireball and 1) or 0
-                        spawn_mist_particles_variable(20, 120, 5)
-                    end)
+                spawn_sync_object(id_bhvBirdoEgg, model, mouthPos.x + sins(yaw) * 40 * coss(pitch), mouthPos.y,
+                    mouthPos.z + coss(yaw) * 40 * coss(pitch), function(o)
+                    o.oForwardVel = math.max(eggVel, 40)
+                    o.oMoveAngleYaw = yaw
+                    o.oFaceAnglePitch = pitch
+                    o.oMoveAnglePitch = pitch
+                    o.oIntangibleTimer = 100
+                    o.globalPlayerIndex = gIndex
+                    o.oBehParams = (isFireball and 1) or 0
+                    spawn_mist_particles_variable(20, 120, 5)
+                end)
             end
         end
     elseif e.spitTimer ~= 0 then
@@ -1044,6 +1048,7 @@ function birdo_update(m)
         end
     end
 end
+
 hook_mario_action(ACT_BIRDO_HOLD_WALKING, { every_frame = act_birdo_hold_walking })
 hook_mario_action(ACT_BIRDO_SPIT_EGG, { every_frame = act_birdo_spit_egg })
 hook_mario_action(ACT_BIRDO_SPIT_EGG_AIR, { every_frame = act_birdo_spit_egg_air })
@@ -1069,6 +1074,7 @@ function fix_torso_bug(m)
         end
     end
 end
+
 hook_event(HOOK_MARIO_UPDATE, fix_torso_bug)
 
 function birdo_on_set_action(m)
@@ -1191,7 +1197,7 @@ end
 -- returns true if this object can be hit by birdo's fireball
 function birdo_fire_is_targettable(o, egg)
     if o.oInteractType == INTERACT_PLAYER then
-        local m = gMarioStates[o.oBehParams-1]
+        local m = gMarioStates[o.oBehParams - 1]
         if (not m) or is_player_active(m) == 0 then return false end
         local gIndex = network_global_index_from_local(m.playerIndex)
         return (gServerSettings.playerInteractions == PLAYER_INTERACTIONS_PVP) and (egg.globalPlayerIndex ~= gIndex)
@@ -1227,20 +1233,20 @@ end
 
 ---@param o Object
 local function bhv_spin_attack_loop(o)
-    cur_obj_set_pos_relative_to_parent(0, 20, 0) -- Makes it move to its parent's position
+    cur_obj_set_pos_relative_to_parent(0, 20, 0)                            -- Makes it move to its parent's position
 
-    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000 -- Rotates it
+    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000                              -- Rotates it
 
     pM = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)] -- Parent MarioState
 
-    if pM.action ~= ACT_SPINJUMP then -- Deletes itself once the action changes
+    if pM.action ~= ACT_SPINJUMP then                                       -- Deletes itself once the action changes
         obj_mark_for_deletion(o)
     end
 end
 
 local id_bhvSpinAttack = hook_behavior(nil, OBJ_LIST_GENACTOR, true, bhv_spin_attack_init, bhv_spin_attack_loop)
 
-gPlayerSyncTable[0].canSpin = true -- Determines if you can spin
+gPlayerSyncTable[0].canSpin = true  -- Determines if you can spin
 gPlayerSyncTable[0].canGrab = false -- Determines if you're near a grabbable
 
 -- Spinable actions, these are actions you can spin out of
@@ -1261,26 +1267,24 @@ local ROSALINA_SOUND_SPIN = audio_sample_load("spin_attack.ogg") -- Load audio s
 
 ---@param m MarioState
 function act_spinjump(m)
- 
     if m.actionTimer >= 15 then
         return set_mario_action(m, ACT_FREEFALL, 0) -- End the action
     end
 
     if m.actionTimer == 0 then
-        play_character_sound(m, CHAR_SOUND_HELLO) -- Plays the character sound
-        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1) -- Plays the spin sound sample
+        play_character_sound(m, CHAR_SOUND_HELLO)                    -- Plays the character sound
+        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1)             -- Plays the spin sound sample
         m.particleFlags = m.particleFlags | ACTIVE_PARTICLE_SPARKLES -- Spawns sparkle particles
 
-        m.vel.y = 30 -- Initial upward velocity
-        m.marioObj.hitboxRadius = 100 -- Damage hitbox
+        m.vel.y = 30                                                 -- Initial upward velocity
+        m.marioObj.hitboxRadius = 100                                -- Damage hitbox
 
         -- Spawn the spin effect
         spawn_non_sync_object(id_bhvSpinAttack, E_MODEL_SPIN_ATTACK, m.pos.x, m.pos.y, m.pos.z,
-        function (o)
-            o.parentObj = m.marioObj
-            o.globalPlayerIndex = m.marioObj.globalPlayerIndex
-        end)
-
+            function(o)
+                o.parentObj = m.marioObj
+                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+            end)
     else
         m.marioObj.hitboxRadius = 37 -- Reset the hitbox after initial hit
     end
@@ -1335,9 +1339,10 @@ local function rosalina_before_action(m, nextAct)
     if nextAct & ACT_FLAG_AIR == 0 then
         if not p.canSpin then
             play_sound_with_freq_scale(SOUND_GENERAL_COIN_SPURT_EU, m.marioObj.header.gfx.cameraToObject, 1.6)
-            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z, function (o)
-                obj_scale(o, 0.75)
-            end)
+            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z,
+                function(o)
+                    obj_scale(o, 0.75)
+                end)
         end
         p.canGrab = false
         p.canSpin = true
@@ -1361,20 +1366,20 @@ end
 
 ---@param o Object
 local function bhv_spin_attack_loop(o)
-    cur_obj_set_pos_relative_to_parent(0, 20, 0) -- Makes it move to its parent's position
+    cur_obj_set_pos_relative_to_parent(0, 20, 0)                            -- Makes it move to its parent's position
 
-    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000 -- Rotates it
+    o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000                              -- Rotates it
 
     pM = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)] -- Parent MarioState
 
-    if pM.action ~= ACT_SPINJUMP then -- Deletes itself once the action changes
+    if pM.action ~= ACT_SPINJUMP then                                       -- Deletes itself once the action changes
         obj_mark_for_deletion(o)
     end
 end
 
 local id_bhvSpinAttack = hook_behavior(nil, OBJ_LIST_GENACTOR, true, bhv_spin_attack_init, bhv_spin_attack_loop)
 
-gPlayerSyncTable[0].canSpin = true -- Determines if you can spin
+gPlayerSyncTable[0].canSpin = true  -- Determines if you can spin
 gPlayerSyncTable[0].canGrab = false -- Determines if you're near a grabbable
 
 -- Spinable actions, these are actions you can spin out of
@@ -1400,20 +1405,19 @@ function act_spinjump(m)
     end
 
     if m.actionTimer == 0 then
-        play_character_sound(m, CHAR_SOUND_HELLO) -- Plays the character sound
-        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1) -- Plays the spin sound sample
+        play_character_sound(m, CHAR_SOUND_HELLO)                    -- Plays the character sound
+        audio_sample_play(ROSALINA_SOUND_SPIN, m.pos, 1)             -- Plays the spin sound sample
         m.particleFlags = m.particleFlags | ACTIVE_PARTICLE_SPARKLES -- Spawns sparkle particles
 
-        m.vel.y = 30 -- Initial upward velocity
-        m.marioObj.hitboxRadius = 100 -- Damage hitbox
+        m.vel.y = 30                                                 -- Initial upward velocity
+        m.marioObj.hitboxRadius = 100                                -- Damage hitbox
 
         -- Spawn the spin effect
         spawn_non_sync_object(id_bhvSpinAttack, E_MODEL_SPIN_ATTACK, m.pos.x, m.pos.y, m.pos.z,
-        function (o)
-            o.parentObj = m.marioObj
-            o.globalPlayerIndex = m.marioObj.globalPlayerIndex
-        end)
-
+            function(o)
+                o.parentObj = m.marioObj
+                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+            end)
     else
         m.marioObj.hitboxRadius = 37 -- Reset the hitbox after initial hit
     end
@@ -1468,9 +1472,10 @@ local function rosalina_before_action(m, nextAct)
     if nextAct & ACT_FLAG_AIR == 0 then
         if not p.canSpin then
             play_sound_with_freq_scale(SOUND_GENERAL_COIN_SPURT_EU, m.marioObj.header.gfx.cameraToObject, 1.6)
-            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z, function (o)
-                obj_scale(o, 0.75)
-            end)
+            spawn_non_sync_object(id_bhvSparkle, E_MODEL_SPARKLES_ANIMATION, m.pos.x, m.pos.y + 200, m.pos.z,
+                function(o)
+                    obj_scale(o, 0.75)
+                end)
         end
         p.canGrab = false
         p.canSpin = true
@@ -1513,10 +1518,12 @@ end
 local function bhv_axe_attack_loop(o)
     local m = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
 
-    local handPos = table.copy(m.pos)
-    get_mario_anim_part_pos(m, MARIO_ANIM_PART_RIGHT_HAND, handPos)
+    local handPos = gVec3fZero()
+    if not get_mario_anim_part_pos(m, MARIO_ANIM_PART_RIGHT_HAND, handPos) then
+        vec3f_copy(handPos, m.pos)
+    end
 
-    local dist = 185
+    local dist = 185.0
 
     local axeDir = table.copy(handPos)
     vec3f_sub(axeDir, m.pos)
@@ -1562,8 +1569,10 @@ local function act_wapeach_axechop(m)
     if m.actionTimer == 17 then
         play_sound(SOUND_OBJ_POUNDING_LOUD, m.marioObj.header.gfx.cameraToObject)
         if m.playerIndex == 0 then
-            local handPos = table.copy(m.pos)
-            get_mario_anim_part_pos(m, MARIO_ANIM_PART_RIGHT_HAND, handPos)
+            local handPos = gVec3fZero()
+            if not get_mario_anim_part_pos(m, MARIO_ANIM_PART_RIGHT_HAND, handPos) then
+                vec3f_copy(handPos, m.pos)
+            end
             spawn_sync_object(id_bhvAxeAttack, E_MODEL_NONE, handPos.x, handPos.y + 25, handPos.z, function(o)
                 o.globalPlayerIndex = m.marioObj.globalPlayerIndex
             end)
@@ -1577,6 +1586,8 @@ local function act_wapeach_axechop(m)
     if is_anim_at_end(m) ~= 0 then
         set_mario_action(m, ACT_IDLE, 0)
     end
+
+    mario_set_forward_vel(m, approach_f32_symmetric(m.forwardVel, 0.0, 5.0))
 
     local step = perform_ground_step(m)
 
@@ -1860,8 +1871,8 @@ function perform_donkey_kong_air_step(m, stepArg)
         end
 
         if (quarterStepResult == AIR_STEP_LANDED or quarterStepResult == AIR_STEP_GRABBED_LEDGE
-            or quarterStepResult == AIR_STEP_GRABBED_CEILING
-            or quarterStepResult == AIR_STEP_HIT_LAVA_WALL) then
+                or quarterStepResult == AIR_STEP_GRABBED_CEILING
+                or quarterStepResult == AIR_STEP_HIT_LAVA_WALL) then
             break
         end
     end
@@ -1884,7 +1895,6 @@ function perform_donkey_kong_air_step(m, stepArg)
 end
 
 function before_donkey_kong_phys_step(m, stepType, stepArg)
-
     if stepType == STEP_TYPE_GROUND then
         -- return perform_donkey_kong_ground_step(m) -- TBA
     elseif stepType == STEP_TYPE_AIR then
@@ -1927,23 +1937,20 @@ local function update_spin_dash_angle(m, accel, lossFactor)
 
     m.slideYaw = atan2s(m.slideVelZ, m.slideVelX)
 
-    facingDYaw =limit_angle(m.faceAngle.y - m.slideYaw)
+    facingDYaw = limit_angle(m.faceAngle.y - m.slideYaw)
     newFacingDYaw = facingDYaw
 
     --! -0x4000 not handled - can slide down a slope while facing perpendicular to it
-    
+
     if (newFacingDYaw > 0 and newFacingDYaw <= 0x4000) then
         newFacingDYaw = newFacingDYaw - 0x200
         if (newFacingDYaw < 0) then newFacingDYaw = 0 end
-
     elseif (newFacingDYaw > -0x4000 and newFacingDYaw < 0) then
         newFacingDYaw = newFacingDYaw + 0x200
         if (newFacingDYaw > 0) then newFacingDYaw = 0 end
-        
     elseif (newFacingDYaw > 0x4000 and newFacingDYaw < 0x8000) then
         newFacingDYaw = newFacingDYaw + 0x200
         if (newFacingDYaw > 0x8000) then newFacingDYaw = 0x8000 end
-        
     elseif (newFacingDYaw > -0x8000 and newFacingDYaw < -0x4000) then
         newFacingDYaw = newFacingDYaw - 0x200
         if (newFacingDYaw < -0x8000) then newFacingDYaw = -0x8000 end
@@ -1959,7 +1966,7 @@ local function update_spin_dash_angle(m, accel, lossFactor)
     mario_update_moving_sand(m)
     mario_update_windy_ground(m)
 
-    m.forwardVel = math.sqrt(m.slideVelX ^ 2 + m.slideVelZ ^2)
+    m.forwardVel = math.sqrt(m.slideVelX ^ 2 + m.slideVelZ ^ 2)
     if m.forwardVel > 256.0 then -- still dunno what we should be replacin' this with
         m.slideVelX = m.slideVelX * 256.0 / m.forwardVel
         m.slideVelZ = m.slideVelZ * 256.0 / m.forwardVel
@@ -1988,7 +1995,7 @@ function update_spin_dashing(m, stopSpeed)
     end
 
     accel = 4.0
-    lossFactor = math.min(m.intendedMag / 32.0 * forward/100 + 0.98, 1)
+    lossFactor = math.min(m.intendedMag / 32.0 * forward / 100 + 0.98, 1)
 
     oldSpeed = math.sqrt(m.slideVelX * m.slideVelX + m.slideVelZ * m.slideVelZ)
 
@@ -2029,7 +2036,7 @@ local function sonic_update_air(m)
 
     local intendedDYaw = m.faceAngle.y - speedAngle
     local intendedMag = m.intendedMag / 32
-        
+
     m.forwardVel = trueFVel
 
     if intendedDYaw < -0x4000 or intendedDYaw > 0x4000 then
@@ -2041,8 +2048,6 @@ local function sonic_update_air(m)
     end
 
     if (check_horizontal_wind(m)) == 0 then
-
-        
         if (m.input & INPUT_NONZERO_ANALOG) ~= 0 then
             m.faceAngle.y = m.intendedYaw
             if m.vel.y < 0 and m.vel.y > -8 then
@@ -2061,7 +2066,7 @@ local function sonic_update_air(m)
             m.vel.z = approach_f32_symmetric(m.vel.z, targetSpeed * coss(m.intendedYaw) * intendedMag, accel)
         end
 
-    --djui_chat_message_create(tostring(math.abs(speed) * sins(m.intendedYaw) * intendedMag))
+        --djui_chat_message_create(tostring(math.abs(speed) * sins(m.intendedYaw) * intendedMag))
     end
 end
 
@@ -2082,7 +2087,7 @@ local function update_sonic_running_speed(m)
     else
         targetSpeed = maxTargetSpeed
     end
-    
+
     if m.pos.y < m.waterLevel then
         targetSpeed = targetSpeed / 2
         accel = 1.025
@@ -2107,20 +2112,20 @@ local function update_sonic_running_speed(m)
     m.faceAngle.y = m.intendedYaw - approach_s32(convert_s16(m.intendedYaw - m.faceAngle.y), 0, 0x800, 0x800)
 
     apply_slope_accel(m)
-    
 end
 
 
 function set_sonic_jump_vel(m, jumpForce, initialVelY)
     local velY = 0
-    
+
     if initialVelY ~= nil then velY = initialVelY end
-    
+
     m.vel.x = m.vel.x + jumpForce * m.floor.normal.x
     m.vel.z = m.vel.z + jumpForce * m.floor.normal.z
 
     m.vel.y = velY + jumpForce * m.floor.normal.y
 end
+
 -- mfw align_with_floor(m) aligns with walls
 local function align_with_floor_but_better(m)
     if m.floor == nil then return end
@@ -2131,7 +2136,6 @@ end
 CUSTOM_CHAR_ANIM_SONIC_RUN = 'sonic_running_2'
 
 local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
-
     local val14 = 0
     local marioObj = m.marioObj
     local val0C = true
@@ -2221,17 +2225,17 @@ local function sonic_anim_and_audio_for_walk(m, walkCap, jogCap, runCap)
     --marioObj.oMarioWalkingPitch = convert_s16(approach_s32(marioObj.oMarioWalkingPitch, find_floor_slope(m, 0x8000), 0x800, 0x800))
     align_with_floor_but_better(m)
 end
-  
+
 function badnik_bounce(m, prevHeightInput, currentGravity)
     local targetVel = math.sqrt(currentGravity * 2 * math.abs(prevHeightInput - m.pos.y))
     local trueTargetVel = 0
-            
+
     if targetVel ^ 2 > m.vel.y ^ 2 then
         trueTargetVel = targetVel
     else
         trueTargetVel = math.abs(m.vel.y)
     end
-  
+
     if (m.action & ACT_FLAG_AIR) ~= 0 then
         m.vel.y = trueTargetVel
     end
@@ -2242,28 +2246,30 @@ function move_with_current(m)
         return
     end
     local step = {
-            x = 0,
-            y = 0,
-            z = 0
+        x = 0,
+        y = 0,
+        z = 0
     }
     vec3f_copy(m.marioObj.header.gfx.pos, m.pos)
-    
+
     apply_water_current(m, step)
-    
+
     m.pos.x = m.pos.x + step.x
     m.pos.y = m.pos.y + step.y
     m.pos.z = m.pos.z + step.z
 end
 
-_G.ACT_SPIN_JUMP        = allocate_mario_action( ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING )
-_G.ACT_SPIN_DASH_CHARGE = allocate_mario_action( ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX )
-_G.ACT_SPIN_DASH        = allocate_mario_action( ACT_FLAG_MOVING | ACT_GROUP_MOVING | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING )
-_G.ACT_SONIC_RUNNING    = allocate_mario_action( ACT_FLAG_MOVING | ACT_GROUP_MOVING)
+_G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT |
+ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
+_G.ACT_SPIN_DASH_CHARGE   = allocate_mario_action(ACT_FLAG_STATIONARY | ACT_GROUP_STATIONARY | ACT_FLAG_SHORT_HITBOX)
+_G.ACT_SPIN_DASH          = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING | ACT_FLAG_SHORT_HITBOX |
+ACT_FLAG_ATTACKING)
+_G.ACT_SONIC_RUNNING      = allocate_mario_action(ACT_FLAG_MOVING | ACT_GROUP_MOVING)
 
-local SOUND_SPIN_JUMP = audio_sample_load("spinjump.ogg") -- Load audio sample
-local SOUND_SPIN_CHARGE = audio_sample_load("spincharge.ogg") -- Load audio sample
-local SOUND_SPIN_RELEASE = audio_sample_load("spinrelease.ogg") -- Load audio sample
-local SOUND_ROLL = audio_sample_load("spinroll.ogg") -- Load audio sample
+local SOUND_SPIN_JUMP     = audio_sample_load("spinjump.ogg")   -- Load audio sample
+local SOUND_SPIN_CHARGE   = audio_sample_load("spincharge.ogg") -- Load audio sample
+local SOUND_SPIN_RELEASE  = audio_sample_load("spinrelease.ogg") -- Load audio sample
+local SOUND_ROLL          = audio_sample_load("spinroll.ogg")   -- Load audio sample
 
 local prevVelY
 local prevHeight
@@ -2280,20 +2286,19 @@ local sonicActionOverride = {
 
 ---@param m MarioState
 local function act_spin_jump(m)
-
     local e = gStateExtras[m.playerIndex]
     if m.actionTimer == 0 then
         audio_sample_play(SOUND_SPIN_JUMP, m.pos, 1)
         e.lastForwardVel = m.forwardVel
     end
 
-    local spinSpeed =  math.max(0.5, e.lastForwardVel / 32)
+    local spinSpeed = math.max(0.5, e.lastForwardVel / 32)
 
     set_character_animation(m, CHAR_ANIM_A_POSE)
-    
+
     local stepResult = perform_air_step(m, 0)
     sonic_update_air(m)
-    
+
     if stepResult ~= AIR_STEP_NONE then
         m.faceAngle.x = 0
         if stepResult == AIR_STEP_LANDED then
@@ -2324,12 +2329,11 @@ end
 
 ---@param m MarioState
 local function act_spin_dash_charge(m)
-
     local e = gStateExtras[m.playerIndex]
     local MINDASH = 4
     local MAXDASH = 128
     local decel = (e.spinCharge / 0.32) / 512
-    
+
     if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
         audio_sample_play(SOUND_SPIN_CHARGE, m.pos, 1)
         e.spinCharge = math.min(e.spinCharge + 32, MAXDASH)
@@ -2351,12 +2355,10 @@ local function act_spin_dash_charge(m)
         e.spinCharge = 0
         return set_mario_action(m, ACT_SPIN_DASH, 0)
     end
-
 end
 
 ---@param m MarioState
 local function act_spin_dash(m)
-
     local e = gStateExtras[m.playerIndex]
 
     if (m.input & INPUT_A_PRESSED) ~= 0 then
@@ -2400,7 +2402,7 @@ local function act_sonic_running(m)
     m.actionState = 0
     update_sonic_running_speed(m)
     local stepResult = perform_ground_step(m)
-    
+
 
     if stepResult == GROUND_STEP_LEFT_GROUND then
         m.vel.y = e.groundYVel
@@ -2415,10 +2417,10 @@ local function act_sonic_running(m)
         push_or_sidle_wall(m, m.pos)
         m.actionTimer = 0
     end
-    
+
     check_ledge_climb_down(m)
     tilt_body_walking(m, startYaw)
-    
+
     if should_begin_sliding(m) ~= 0 then
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0)
     end
@@ -2450,7 +2452,7 @@ local function act_sonic_running(m)
     if analog_stick_held_back(m) ~= 0 then
         return set_mario_action(m, ACT_TURNING_AROUND, 0)
     end
-    
+
     return 0
 end
 
@@ -2484,7 +2486,7 @@ end
 local function sonic_update(m)
     local e = gStateExtras[m.playerIndex]
 
-    if m.action == ACT_SONIC_RUNNING or m.action == ACT_SPIN_DASH then    
+    if m.action == ACT_SONIC_RUNNING or m.action == ACT_SPIN_DASH then
         e.groundYVel = -math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2) * sins(find_floor_slope(m, 0x8000))
     else
         e.groundYVel = 0
@@ -2536,7 +2538,6 @@ function sonic_allow_interact(m, o, intType)
 end
 
 local function sonic_on_interact(m, o, intType)
-
     if (m.action == ACT_SONIC_RUNNING) and m.heldObj == nil then
         if obj_has_behavior_id(o, id_bhvDoorWarp) ~= 0 then
             set_mario_action(m, ACT_DECELERATING, 0)
@@ -2570,32 +2571,31 @@ local function sonic_before_phys_step(m)
     end
 end
 
-hook_mario_action(ACT_SPIN_JUMP,        act_spin_jump)
+hook_mario_action(ACT_SPIN_JUMP, act_spin_jump)
 hook_mario_action(ACT_SPIN_DASH_CHARGE, act_spin_dash_charge)
-hook_mario_action(ACT_SPIN_DASH,        act_spin_dash)
-hook_mario_action(ACT_SONIC_RUNNING,    act_sonic_running)
+hook_mario_action(ACT_SPIN_DASH, act_spin_dash)
+hook_mario_action(ACT_SONIC_RUNNING, act_sonic_running)
 
 ------------
 --  Main  --
 ------------
 
 local function on_character_select_load()
-    
-    local _ENV = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
-    
+    local _ENV        = setmetatable(charSelect, { __index = _ENV }) -- The CS environment
+
     -- Character Types Enum --
 
-    _G.CT_TOADETTE          = extraCharacters[1].tablePos  --- @type CharacterType
-    _G.CT_PEACH             = extraCharacters[2].tablePos  --- @type CharacterType
-    _G.CT_DAISY             = extraCharacters[3].tablePos  --- @type CharacterType
-    _G.CT_YOSHI             = extraCharacters[4].tablePos  --- @type CharacterType
-    _G.CT_BIRDO             = extraCharacters[5].tablePos  --- @type CharacterType
+    _G.CT_TOADETTE    = extraCharacters[1].tablePos        --- @type CharacterType
+    _G.CT_PEACH       = extraCharacters[2].tablePos        --- @type CharacterType
+    _G.CT_DAISY       = extraCharacters[3].tablePos        --- @type CharacterType
+    _G.CT_YOSHI       = extraCharacters[4].tablePos        --- @type CharacterType
+    _G.CT_BIRDO       = extraCharacters[5].tablePos        --- @type CharacterType
     --_G.CT_FOREMANSPIKE     = extraCharacters[6].tablePos  --- @type CharacterType
-    _G.CT_PAULINE           = extraCharacters[7].tablePos  --- @type CharacterType
-    _G.CT_ROSALINA          = extraCharacters[8].tablePos  --- @type CharacterType
-    _G.CT_WAPEACH           = extraCharacters[9].tablePos  --- @type CharacterType
-    _G.CT_DONKEY_KONG       = extraCharacters[10].tablePos --- @type CharacterType
-    _G.CT_SONIC             = extraCharacters[11].tablePos --- @type CharacterType
+    _G.CT_PAULINE     = extraCharacters[7].tablePos        --- @type CharacterType
+    _G.CT_ROSALINA    = extraCharacters[8].tablePos        --- @type CharacterType
+    _G.CT_WAPEACH     = extraCharacters[9].tablePos        --- @type CharacterType
+    _G.CT_DONKEY_KONG = extraCharacters[10].tablePos       --- @type CharacterType
+    _G.CT_SONIC       = extraCharacters[11].tablePos       --- @type CharacterType
 
     -- Toadette
     character_hook_moveset(CT_TOADETTE, HOOK_MARIO_UPDATE, toadette_update)
