@@ -547,6 +547,9 @@ extraCharacters = {
             [CHAR_SOUND_YAH_WAH_HOO] = { "birdo_yah_wah_hoo1.ogg", "birdo_yah_wah_hoo2.ogg", "birdo_yah_wah_hoo3.ogg"},
             [CHAR_SOUND_HELLO] = "birdo_hello.ogg"
         },
+        anims = {
+            [CS_ANIM_MENU] = "cs_birdo",
+        }
     },
 
 --------------------------------
