@@ -6,6 +6,7 @@ local sSonicSpinBallActs = {
     [ACT_SPIN_JUMP]        = true,
     [ACT_SPIN_DASH]        = true,
     [ACT_AIR_SPIN]         = true,
+    [ACT_HOMING_ATTACK]         = true,
 }
 
 local sSonicSpinDashActs = {

@@ -1751,7 +1751,7 @@ end
 local prevVelY
 local prevHeight
 
-local randomTimer = 0
+local physTimer = 0
 local lastforwardPos = gVec3fZero()
 local realFVel = 0 -- Velocity calculated in realtime so that walls count.
 
@@ -2184,6 +2184,20 @@ function sonic_air_action_step(m, landAction, animation, stepArg, bonking)
     return stepResult
 end
 
+-- Target above the enemy.
+function sonic_pitch_to_object(m, target)
+    if (m == nil) or (target == nil) then return 0 end
+    local a, b, c, d
+    a = target.oPosX - m.pos.x
+    c = target.oPosZ - m.pos.z
+    a = math.sqrt(a * a + c * c)
+
+    b = -m.pos.y
+    d = -(target.oPosY + target.hitboxHeight)
+
+    return atan2s(a, d - b)
+end
+
 _G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
 _G.ACT_SONIC_FALL         = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
 _G.ACT_AIR_SPIN           = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_AIR | ACT_FLAG_ATTACKING | ACT_GROUP_AIRBORNE)
@@ -2209,6 +2223,26 @@ local sonicActionOverride = {
     [ACT_WALKING]      = ACT_SONIC_RUNNING,
     [ACT_CROUCH_SLIDE] = ACT_SPIN_DASH,
 }
+
+local function perform_sonic_a_action(m)
+    local o = obj_get_nearest_object_with_behavior_id(m.marioObj, id_bhvGoomba)
+    local dist = dist_between_objects(m.marioObj, o)
+    
+    if m.pos.y < m.waterLevel then
+        m.action = ACT_SPIN_JUMP
+        m.vel.y = 30
+    else
+        if o ~= nil then
+			djui_chat_message_create(tostring(o.oHealth))
+		end
+		
+        if o ~= nil and dist < 1000 then
+            return set_mario_action(m, ACT_HOMING_ATTACK, 0)
+        else
+            return set_mario_action(m, ACT_AIR_SPIN, 1)
+        end
+    end
+end
 
 ---@param m MarioState
 local function act_spin_jump(m)
@@ -2239,11 +2273,7 @@ local function act_spin_jump(m)
     end
 
     if (m.controller.buttonPressed & A_BUTTON) ~= 0 and m.actionTimer > 0 then
-        if m.pos.y < m.waterLevel then
-            m.vel.y = 30
-        else
-            return set_mario_action(m, ACT_AIR_SPIN, 1)
-        end
+        return perform_sonic_a_action(m)
     end
 
 
@@ -2264,12 +2294,7 @@ local function act_air_spin(m)
     m.marioObj.header.gfx.angle.x = m.faceAngle.x
 
     if (m.input & INPUT_A_PRESSED) ~= 0 and m.actionTimer > 0 then
-        if m.pos.y < m.waterLevel then
-            m.action = ACT_SPIN_JUMP
-            m.vel.y = 20
-        else
-            return set_mario_action(m, ACT_AIR_SPIN, 1)
-        end
+        return perform_sonic_a_action(m)
     end
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
@@ -2331,6 +2356,57 @@ local function act_air_spin(m)
     end
 
     m.actionTimer = m.actionTimer + 1
+end
+
+local function act_homing_attack(m)
+    local e = gStateExtras[m.playerIndex]
+    local spinSpeed = math.max(0.5, e.lastForwardVel / 32)
+    local o = obj_get_nearest_object_with_behavior_id(m.marioObj, id_bhvGoomba)
+    local yaw = obj_angle_to_object(m.marioObj, o)
+    local pitch = sonic_pitch_to_object(m, o)
+    
+    if m.actionTimer <= 0 then
+        local totalVel = math.sqrt(m.forwardVel ^ 2 + m.vel.y ^ 2)
+    
+        if totalVel < 100 then m.forwardVel = 100 
+        elseif totalVel >= 100 and totalVel < 172 then m.forwardVel = totalVel + 20  end
+    
+        m.faceAngle.y = yaw
+        
+        m.vel.y = math.abs(m.forwardVel) * sins(-pitch)
+        m.vel.x = math.abs(m.forwardVel) * sins(yaw) * coss(pitch)
+        m.vel.z = math.abs(m.forwardVel) * coss(yaw) * coss(pitch)
+    end
+
+    set_character_animation(m, CHAR_ANIM_A_POSE)
+
+    local stepResult = perform_air_step(m, 0)
+    if stepResult == AIR_STEP_LANDED then
+        if (m.controller.buttonDown & Z_TRIG) ~= 0 then
+            audio_sample_play(SOUND_ROLL, m.pos, 1)
+            set_mario_action(m, ACT_SPIN_DASH, 0)
+        else
+
+            if (check_fall_damage_or_get_stuck(m, ACT_HARD_BACKWARD_GROUND_KB) == 0) then
+                m.faceAngle.y = atan2s(m.vel.z, m.vel.x)
+                mario_set_forward_vel(m, math.sqrt(m.vel.x ^ 2 + m.vel.z ^ 2))
+                set_mario_action(m, ACT_SONIC_RUNNING, 0)
+            end
+        end
+
+    end
+
+    m.faceAngle.x = m.faceAngle.x + (0x2000 * spinSpeed)
+    m.marioObj.header.gfx.angle.x = m.faceAngle.x
+
+    if (m.controller.buttonDown & Z_TRIG) ~= 0 then
+        if (m.controller.buttonPressed & B_BUTTON) ~= 0 then
+            return set_mario_action(m, ACT_GROUND_POUND, 0)
+        end
+    end
+
+    m.actionTimer = m.actionTimer + 1
+    
 end
 
 -- Code nabbed from Shell Rush.
@@ -2488,12 +2564,7 @@ function act_sonic_fall(m)
     local landAction = 0
 
     if (m.input & INPUT_A_PRESSED) ~= 0 then
-        if m.pos.y < m.waterLevel then
-            m.action = ACT_SPIN_JUMP
-            m.vel.y = 20
-        else
-            return set_mario_action(m, ACT_AIR_SPIN, 1)
-        end
+        return perform_sonic_a_action(m)
     end
 
     if (m.input & INPUT_B_PRESSED) ~= 0 then
@@ -2512,6 +2583,13 @@ function act_sonic_fall(m)
             m.faceAngle.x = 0
         elseif m.actionArg == 2 then
             animation = CHAR_ANIM_FALL_FROM_SLIDE_KICK
+            m.faceAngle.x = 0
+        elseif m.actionArg == 3 then
+            if m.vel.y > 0 then
+                animation = CHAR_ANIM_DOUBLE_JUMP_RISE
+            else
+                animation = CHAR_ANIM_DOUBLE_JUMP_FALL
+            end
             m.faceAngle.x = 0
         end
         landAction = ACT_FREEFALL_LAND
@@ -2618,10 +2696,20 @@ local bounceTypes = {
     [INTERACT_KOOPA] = true
 }
 
-function sonic_allow_interact(m, _, intType)
+function sonic_allow_interact(m, o, intType)
     if bounceTypes[intType] then
         prevVelY = m.vel.y
     end
+
+    if bounceTypes[intType] and (o.oInteractionSubtype & INT_SUBTYPE_TWIRL_BOUNCE) == 0 then
+        if m.action == ACT_HOMING_ATTACK then
+            o.oInteractStatus = ATTACK_GROUND_POUND_OR_TWIRL + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
+            set_mario_action(m, ACT_SONIC_FALL, 3)
+            badnik_bounce(m, prevHeight, 4)
+            return false
+        end
+    end
+
 end
 
 local function sonic_on_interact(m, o, intType)
@@ -2654,7 +2742,7 @@ local function sonic_before_phys_step(m)
         end
     end
 
-    if randomTimer > 0 then
+    if physTimer > 0 and m.playerIndex == 0 then
         realFVel = math.sqrt((m.pos.x - lastforwardPos.x) ^ 2 + (m.pos.z - lastforwardPos.z) ^ 2)
         local speedAngle = atan2s(m.vel.z, m.vel.x)
         local intendedDYaw = m.faceAngle.y - speedAngle
@@ -2665,10 +2753,10 @@ local function sonic_before_phys_step(m)
 
         vec3f_copy(lastforwardPos, m.pos)
 
-        randomTimer = 0
+        physTimer = 0
     end
 
-    randomTimer = randomTimer + 1
+    physTimer = physTimer + 1
 end
 
 hook_mario_action(ACT_SPIN_JUMP, act_spin_jump)
@@ -2677,6 +2765,7 @@ hook_mario_action(ACT_SPIN_DASH, act_spin_dash, INT_FAST_ATTACK_OR_SHELL)
 hook_mario_action(ACT_SONIC_RUNNING, act_sonic_running)
 hook_mario_action(ACT_SONIC_FALL, act_sonic_fall)
 hook_mario_action(ACT_AIR_SPIN, act_air_spin)
+hook_mario_action(ACT_HOMING_ATTACK, {every_frame = act_homing_attack, gravity = function(m) end}, INT_FAST_ATTACK_OR_SHELL)
 
 ------------------------------
 -- Character Data Resetting --
