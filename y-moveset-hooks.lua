@@ -12,9 +12,9 @@ if not charSelect then return end
 -- Insert your actions to force reset when you aren't that character
 local charResetActions = {
     [ACT_BIRDO_HOLD_WALKING]  = CT_BIRDO,
-    [ACT_BIRDO_SPIT_EGG]      = CT_BIRDO,
-    [ACT_BIRDO_SPIT_EGG_AIR]  = CT_BIRDO,
-    [ACT_BIRDO_SPIT_EGG_WALK] = CT_BIRDO,
+    [ACT_SPIT_EGG]            = CT_BIRDO,
+    [ACT_SPIT_EGG_AIR]        = CT_BIRDO,
+    [ACT_SPIT_EGG_WALK]       = CT_BIRDO,
 }
 
 --- Resets the character action
