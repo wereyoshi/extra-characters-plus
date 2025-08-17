@@ -69,3 +69,8 @@
 --- @alias SonicMouthSideGSCId
 --- | `SONIC_MOUTH_LEFT`
 --- | `SONIC_MOUTH_RIGHT`
+
+--- @alias HandParam
+--- | `SONIC_HAND_RIGHT`
+--- | `SONIC_HAND_LEFT`
+--- | `WAPEACH_HAND_AXE`
