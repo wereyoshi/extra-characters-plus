@@ -1087,6 +1087,7 @@ extraCharacters = {
             [CHAR_ANIM_IDLE_HEAD_RIGHT] = 'donkey_idle_2',
             [CHAR_ANIM_FIRST_PERSON] = 'donkey_first_person',
             [CHAR_ANIM_SLOW_LEDGE_GRAB] = 'donkey_00_ledgeclimb',
+            [CHAR_ANIM_FALL_OVER_BACKWARDS] = 'donkey_01_fall_over_backwards',
             [CHAR_ANIM_SKID_ON_GROUND] = 'donkey_0F_skid_on_ground',
             [CHAR_ANIM_SHIVERING_RETURN_TO_IDLE] = 'donkey_1a_shivering_return_to_idle',
             [CHAR_ANIM_FALL_OVER_BACKWARDS] = 'donkey_02_fall',
