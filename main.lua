@@ -108,6 +108,7 @@ extraCharacters = {
             metalWing = smlua_model_util_get_id("peach_player_metal_wing_cap_geo")
         },
         palette = {
+            palettename = "Default",
             [PANTS]  = { r = 0xFF, g = 0x50, b = 0x96 },
             [SHIRT]  = { r = 0xF8, g = 0xC8, b = 0xBB },
             [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF },
@@ -1258,6 +1259,10 @@ local function on_character_select_load()
         if i ~= 11 and anims then character_add_animations(model, anims, eyes) end
         -- if meter then character_add_health_meter(model, meter) end
     end
+
+    -- Extra Palettes
+    --character_add_palette_preset(model, PALETTE_REDYOSHI, 'Red Yoshi')
+
 
     -- CoopDX Characters Voice Cast
     credit_add(TEXT_VANILLA_CAST..TEXT_VOICE_ACTOR, "Charles Martinet", "Mario")
