@@ -252,7 +252,7 @@ function custom_dkroll_switch(n)
     local m = geo_get_mario_state()
 
     if sDonkeyKongRollActs[m.action] and (m.action ~= ACT_DONKEY_KONG_ROLL or
-    m.actionTimer <= DONKEY_KONG_ROLL_TIME or m.actionArg == 0) then
+    m.actionState ~= 0) then
         switch.selectedCase = 1
     else
         switch.selectedCase = 0

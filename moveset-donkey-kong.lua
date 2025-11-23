@@ -4,8 +4,11 @@
 
 if not charSelect then return end
 
-DONKEY_KONG_ROLL_SPEED = 50
-DONKEY_KONG_ROLL_TIME = 15
+DONKEY_KONG_ROLL_SPEED = 60
+DONKEY_KONG_ROLL_DECAY_PERCENT = 0.98
+DONKEY_KONG_ROLL_DECAY_TIME = 10
+DONKEY_KONG_ROLL_STARTUP = 4
+DONKEY_KONG_ROLL_END = 25
 
 --- @param m MarioState
 --- Applies gravity to donkey kong
@@ -115,9 +118,9 @@ function donkey_kong_before_phys_step(m, stepType, stepArg)
 end
 
 function donkey_kong_before_action(m, action, actionArg)
-    if (action == ACT_DIVE or action == ACT_MOVE_PUNCHING) and m.action & ACT_FLAG_AIR == 0 and m.forwardVel > 20 then
-        mario_set_forward_vel(m, math.min(m.forwardVel - 32 + DONKEY_KONG_ROLL_SPEED, DONKEY_KONG_ROLL_SPEED))
+    if (action == ACT_DIVE or action == ACT_MOVE_PUNCHING) and m.action & ACT_FLAG_AIR == 0 and m.input & INPUT_A_DOWN == 0 and m.forwardVel >= 20 then
         m.vel.y = 20
+        m.faceAngle.x = 0
         return ACT_DONKEY_KONG_ROLL
     elseif (action == ACT_PUNCHING and actionArg == 9) then
         return ACT_DONKEY_KONG_POUND
@@ -140,8 +143,8 @@ function on_attack_object(m, o, interaction)
     -- speed up when hitting enemies with roll
     if (m.action == ACT_DONKEY_KONG_ROLL or m.action == ACT_DONKEY_KONG_ROLL_AIR) and (interaction & INT_FAST_ATTACK_OR_SHELL ~= 0) then
         if o.oInteractType == INTERACT_BULLY then
-            mario_set_forward_vel(m, 0)
-            m.actionTimer = DONKEY_KONG_ROLL_TIME
+            mario_set_forward_vel(m, -25)
+            m.actionTimer = DONKEY_KONG_ROLL_DECAY_TIME
             m.actionArg = 1
         else
             local newForwardVel = math.min(m.forwardVel * 1.1, 70)
@@ -162,8 +165,11 @@ _G.ACT_DONKEY_KONG_POUND_HIT = allocate_mario_action(ACT_GROUP_STATIONARY | ACT_
 local function act_donkey_kong_roll(m)
     if (not m) then return 0 end
 
-    if (mario_floor_is_steep(m)) ~= 0 then
-        return set_mario_action(m, ACT_BEGIN_SLIDING, 0)
+    local isSliding = (mario_floor_is_slippery(m)) ~= 0
+    if isSliding then
+        if update_sliding(m, 4) ~= 0 or m.actionState == 0 then
+            return set_mario_action(m, ACT_DECELERATING, 0)
+        end
     end
 
     if mario_check_object_grab(m) ~= 0 then
@@ -176,31 +182,42 @@ local function act_donkey_kong_roll(m)
         m.faceAngle.x = 0
         m.marioObj.header.gfx.angle.x = m.faceAngle.x
         local result = set_jumping_action(m, ACT_JUMP, 0)
-        m.forwardVel = m.forwardVel / 0.8
+        if not isSliding then
+            m.forwardVel = m.forwardVel / 0.8 - 5 -- conserve all jump momentum minus 5
+        end
         return result
     end
 
-    local doSpinAnim = false
+    local doSpinAnim = true
     m.actionTimer = m.actionTimer + 1
-    if m.actionTimer > DONKEY_KONG_ROLL_TIME and m.actionArg ~= 0 then
-        -- ending animation
-        local newForwardVel = approach_s32(m.forwardVel, 0, 5, 5)
+    
+    set_character_animation(m, CHAR_ANIM_START_CROUCHING)
+    if m.actionState == 0 then
+        doSpinAnim = false
+        local newForwardVel = m.forwardVel
+        newForwardVel = DONKEY_KONG_ROLL_SPEED * (m.actionTimer / DONKEY_KONG_ROLL_STARTUP)
+        if m.actionTimer >= DONKEY_KONG_ROLL_STARTUP then
+            newForwardVel = DONKEY_KONG_ROLL_SPEED
+            m.actionState = 1
+        end
         mario_set_forward_vel(m, newForwardVel)
-        set_mario_animation(m, MARIO_ANIM_STOP_SKID)
-        set_anim_to_frame(m, m.marioObj.header.gfx.animInfo.animFrame + 2)
-        if is_anim_at_end(m) ~= 0 then
-            m.actionArg = 0
-        end
-    else
-        doSpinAnim = true
-        if m.actionTimer % 4 == 0 then
-            play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
-        end
+    elseif m.actionTimer >= DONKEY_KONG_ROLL_DECAY_TIME and not isSliding then
+        -- slow down after a time
+        local newForwardVel = m.forwardVel
+        newForwardVel = newForwardVel * DONKEY_KONG_ROLL_DECAY_PERCENT
+        mario_set_forward_vel(m, newForwardVel)
     end
+
+    -- influence direction slightly
+    m.marioObj.oMoveAngleYaw = m.faceAngle.y
+    cur_obj_rotate_yaw_toward(m.intendedYaw, 0x100)
+    m.faceAngle.y = m.marioObj.oMoveAngleYaw
     
     local result = perform_ground_step(m)
     if result == GROUND_STEP_LEFT_GROUND then
-        --mario_set_forward_vel(m, DONKEY_KONG_ROLL_SPEED)
+        if m.actionState == 0 then
+            mario_set_forward_vel(m, DONKEY_KONG_ROLL_SPEED)
+        end
         return set_mario_action(m, ACT_DONKEY_KONG_ROLL_AIR, 0)
     elseif result == GROUND_STEP_HIT_WALL then
         if (m.wall or gServerSettings.bouncyLevelBounds == BOUNCY_LEVEL_BOUNDS_OFF) then
@@ -211,13 +228,17 @@ local function act_donkey_kong_roll(m)
     end
 
     if doSpinAnim then
-        m.faceAngle.x = m.faceAngle.x + 0x100 * m.forwardVel
+        local prevFaceAngleX = m.faceAngle.x
+        m.faceAngle.x = m.faceAngle.x + 0x60 * m.forwardVel
         m.marioObj.header.gfx.angle.x = m.faceAngle.x
-        m.marioObj.header.gfx.pos.y = m.marioObj.header.gfx.pos.y + 50 -- remove after roll state is fixed
+        m.marioObj.header.gfx.pos.y = m.marioObj.header.gfx.pos.y + 50
+        if prevFaceAngleX <= 0 and m.faceAngle.x > 0 then
+            play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+        end
     end
 
-    -- end roll earlier from falls and after hitting an enemy
-    if m.actionTimer > DONKEY_KONG_ROLL_TIME and m.actionArg == 0 then
+    -- end roll
+    if m.actionTimer > DONKEY_KONG_ROLL_END then
         return set_mario_action(m, ACT_WALKING, 0)
     end
 
@@ -235,24 +256,24 @@ local function act_donkey_kong_roll_air(m)
         m.faceAngle.x = 0
         m.marioObj.header.gfx.angle.x = m.faceAngle.x
         local result = set_mario_action(m, ACT_JUMP, 0)
-        m.forwardVel = m.forwardVel / 0.8
+        m.forwardVel = m.forwardVel / 0.8 - 5 -- conserve all jump momentum minus 5
         return result
     end
 
     m.actionTimer = m.actionTimer + 1
-    if m.actionTimer % 4 == 0 then
-        play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
-    end
+
+    -- influence direction slightly
+    m.marioObj.oMoveAngleYaw = m.faceAngle.y
+    cur_obj_rotate_yaw_toward(m.intendedYaw, 0x100)
+    m.faceAngle.y = m.marioObj.oMoveAngleYaw
+    mario_set_forward_vel(m, m.forwardVel)
 
     local result = perform_air_step(m, AIR_STEP_CHECK_LEDGE_GRAB)
     if result == AIR_STEP_LANDED then
-        if (should_get_stuck_in_ground(m) ~= 0) then
-            queue_rumble_data_mario(m, 5, 80);
-            play_character_sound(m, CHAR_SOUND_OOOF2);
-            set_mario_particle_flags(m, PARTICLE_MIST_CIRCLE, 0);
-            drop_and_set_mario_action(m, ACT_HEAD_STUCK_IN_GROUND, 0);
-        elseif (check_fall_damage(m, ACT_HARD_FORWARD_GROUND_KB) ~= 0) then
-            set_mario_action(m, ACT_DONKEY_KONG_ROLL, 0);
+        if (check_fall_damage_or_get_stuck(m, ACT_HARD_BACKWARD_GROUND_KB) == 0) then
+            set_mario_action(m, ACT_DONKEY_KONG_ROLL, 0)
+            m.actionState = 1
+            return 1
         end
     elseif result == AIR_STEP_HIT_WALL then
         if (m.wall or gServerSettings.bouncyLevelBounds == BOUNCY_LEVEL_BOUNDS_OFF) then
@@ -267,11 +288,16 @@ local function act_donkey_kong_roll_air(m)
         lava_boost_on_wall(m)
         return 1
     end
-    m.faceAngle.x = m.faceAngle.x + 0x100 * m.forwardVel
-    m.marioObj.header.gfx.angle.x = m.faceAngle.x
-    m.marioObj.header.gfx.pos.y = m.marioObj.header.gfx.pos.y + 50 -- remove after roll state is fixed
 
-    if m.actionTimer > DONKEY_KONG_ROLL_TIME then
+    local prevFaceAngleX = m.faceAngle.x
+    m.faceAngle.x = m.faceAngle.x + 0x60 * m.forwardVel
+    m.marioObj.header.gfx.angle.x = m.faceAngle.x
+    m.marioObj.header.gfx.pos.y = m.marioObj.header.gfx.pos.y + 50
+    if prevFaceAngleX <= 0 and m.faceAngle.x > 0 then
+        play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+    end
+
+    if m.actionTimer > DONKEY_KONG_ROLL_END then
         return set_mario_action(m, ACT_FREEFALL, 0)
     end
 
@@ -284,7 +310,7 @@ local function act_donkey_kong_pound(m)
     if (not m) then return 0 end
 
     mario_set_forward_vel(m, 0)
-    if (mario_floor_is_steep(m)) ~= 0 then
+    if (mario_floor_is_slippery(m)) ~= 0 then
         return set_mario_action(m, ACT_BEGIN_SLIDING, 0)
     end
 
