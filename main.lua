@@ -1240,7 +1240,15 @@ extraCharacters = {
             [CHAR_ANIM_STAND_UP_FROM_LAVA_BOOST] = 'donkey_28_standup_from_lava_boost',
             [CHAR_ANIM_FIRE_LAVA_BURN] = 'donkey_29_fire_lave_burn',
             [CHAR_ANIM_DIVE] = 'donkey_88_dive',
-            
+            [CHAR_ANIM_MISSING_CAP] = 'donkey_5E_missingcap',
+            [CHAR_ANIM_STAR_DANCE] = 'donkey_CD_stardance',
+            [CHAR_ANIM_RETURN_FROM_STAR_DANCE] = 'donkey_CE_stardance_stop',
+            [CHAR_ANIM_GROUND_KICK] = 'donkey_66_GroundKick',
+            [CHAR_ANIM_PULL_DOOR_WALK_IN] = 'donkey_5F_pulldoor',
+            [CHAR_ANIM_PUSH_DOOR_WALK_IN] = 'donkey_60_pushdoor',
+            [CHAR_ANIM_START_TIPTOE] = 'donkey_CA_starttiptoe',
+            [CHAR_ANIM_TIPTOE] = 'donkey_92_tiptoe',
+            [CS_ANIM_MENU] = 'cs_donkey',
         },
     },
     -----------
@@ -1461,3 +1469,7 @@ end
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
 hook_event(HOOK_CHARACTER_SOUND, on_character_sound)
 hook_event(HOOK_MARIO_UPDATE, mario_update)
+-- Delete this after testing.
+hook_event(HOOK_MARIO_UPDATE, function (m)
+    m.flags = m.flags & ~MARIO_CAP_ON_HEAD
+end)
