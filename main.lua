@@ -65,7 +65,43 @@ extraCharacters = {
                 [SKIN]   = { r = 0xFE, g = 0xD5, b = 0xA1 },
                 [CAP]    = { r = 0xF3, g = 0x00, b = 0x80 },
                 [EMBLEM] = { r = 0xF3, g = 0x00, b = 0x80 }
-            }
+            },
+
+            {
+                name = "Drill",
+                [PANTS]  = { r = 0xFF, g = 0xFF, b = 0xFF },
+                [SHIRT]  = { r = 0xEE, g = 0x99, b = 0x00 },
+                [GLOVES] = { r = 0xFF, g = 0x98, b = 0xDD },
+                [SHOES]  = { r = 0x66, g = 0x69, b = 0x77 },
+                [HAIR]   = { r = 0xDB, g = 0x08, b = 0x08 },
+                [SKIN]   = { r = 0xFE, g = 0xD5, b = 0xA1 },
+                [CAP]    = { r = 0x66, g = 0x69, b = 0x77 },
+                [EMBLEM] = { r = 0xFF, g = 0x98, b = 0xDD }
+            },
+
+            {
+                name = "Chanterelle",
+                [PANTS]  = { r = 0x73, g = 0x42, b = 0xA5 },
+                [SHIRT]  = { r = 0x73, g = 0x42, b = 0xA5 },
+                [GLOVES] = { r = 0x73, g = 0x42, b = 0xA5 },
+                [SHOES]  = { r = 0x7B, g = 0x21, b = 0x4A },
+                [HAIR]   = { r = 0x7B, g = 0x21, b = 0x4A },
+                [SKIN]   = { r = 0xBD, g = 0x9C, b = 0x84 },
+                [CAP]    = { r = 0xBD, g = 0xBD, b = 0xBD },
+                [EMBLEM] = { r = 0x55, g = 0x55, b = 0x55 }
+            },
+            
+            {
+                name = "Poison",
+                [PANTS]  = { r = 0x00, g = 0x00, b = 0x00 },
+                [SHIRT]  = { r = 0x00, g = 0x00, b = 0x00 },
+                [GLOVES] = { r = 0x00, g = 0x00, b = 0x00 },
+                [SHOES]  = { r = 0x00, g = 0x00, b = 0x00 },
+                [HAIR]   = { r = 0x99, g = 0x4B, b = 0x0C },
+                [SKIN]   = { r = 0xFF, g = 0xC8, b = 0xB8 },
+                [CAP]    = { r = 0x99, g = 0x4B, b = 0x0C },
+                [EMBLEM] = { r = 0x99, g = 0x4B, b = 0x0C }
+            },
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = "toadette_attacked.ogg",
@@ -160,7 +196,40 @@ extraCharacters = {
                 [SKIN]   = { r = 0xFE, g = 0xC1, b = 0x79 },
                 [CAP]    = { r = 0xFF, g = 0xFF, b = 0x00 },
                 [EMBLEM] = { r = 0x00, g = 0x82, b = 0xFF }
-            }
+            },
+            {
+                name = "Classic",
+                [PANTS]  = { r = 0xB5, g = 0x31, b = 0x20 },
+                [SHIRT]  = { r = 0xFF, g = 0xFF, b = 0xFF },
+                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF },
+                [SHOES]  = { r = 0xEA, g = 0x9E, b = 0x22 },
+                [HAIR]   = { r = 0xB5, g = 0x31, b = 0x20 },
+                [SKIN]   = { r = 0xEA, g = 0x9E, b = 0x22 },
+                [CAP]    = { r = 0xEA, g = 0x9E, b = 0x22 },
+                [EMBLEM] = { r = 0xB5, g = 0x31, b = 0x20 }
+            },
+            {
+                name = "Ice Cream",
+                [PANTS]  = { r = 0xA8, g = 0xE0, b = 0xF8 },
+                [SHIRT]  = { r = 0x50, g = 0xD0, b = 0xF8 },
+                [GLOVES] = { r = 0xF8, g = 0xF8, b = 0xF8 },
+                [SHOES]  = { r = 0x48, g = 0xB0, b = 0xE0 },
+                [HAIR]   = { r = 0xF8, g = 0x80, b = 0x00 },
+                [SKIN]   = { r = 0xF8, g = 0xD0, b = 0x98 },
+                [CAP]    = { r = 0xF8, g = 0xF8, b = 0x00 },
+                [EMBLEM] = { r = 0xF8, g = 0xF8, b = 0x00 }
+            },
+            {
+                name = "Shadow Queen",
+                [PANTS]  = { r = 0x4A, g = 0x38, b = 0x4A },
+                [SHIRT]  = { r = 0x6B, g = 0x55, b = 0x63 },
+                [GLOVES] = { r = 0xAD, g = 0x9E, b = 0xA5 },
+                [SHOES]  = { r = 0xFF, g = 0x1C, b = 0x63 },
+                [HAIR]   = { r = 0xFF, g = 0xE3, b = 0x31 },
+                [SKIN]   = { r = 0xCB, g = 0xB6, b = 0xC8 },
+                [CAP]    = { r = 0xC6, g = 0x9A, b = 0x18 },
+                [EMBLEM] = { r = 0xFF, g = 0x1C, b = 0x63 }
+            },
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = "peach_attacked.ogg",
@@ -326,15 +395,51 @@ extraCharacters = {
         palettes = {
             {
                 name = "Default",
-                [PANTS]  = { r = 0xFF, g = 0xFF, b = 0xFF },
-                [SHIRT]  = { r = 0xEF, g = 0xCA, b = 0x11 },
-                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF },
-                [SHOES]  = { r = 0x00, g = 0x00, b = 0xFF },
-                [HAIR]   = { r = 0xFF, g = 0x61, b = 0x00 },
-                [SKIN]   = { r = 0xFD, g = 0xAE, b = 0x82 },
-                [CAP]    = { r = 0xFF, g = 0x00, b = 0x00 },
-                [EMBLEM] = { r = 0x00, g = 0xFF, b = 0xFF }
-            }
+                [PANTS]  = { r = 0xFF, g = 0xFF, b = 0xFF }, --FFFFFF
+                [SHIRT]  = { r = 0xEF, g = 0xCA, b = 0x11 }, --EFCA11
+                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF }, --FFFFFF
+                [SHOES]  = { r = 0x00, g = 0x00, b = 0xFF }, --0000FF
+                [HAIR]   = { r = 0xFF, g = 0x61, b = 0x00 }, --FF6100
+                [SKIN]   = { r = 0xFD, g = 0xAE, b = 0x82 }, --FDAE82
+                [CAP]    = { r = 0xFF, g = 0x00, b = 0x00 }, --FF0000
+                [EMBLEM] = { r = 0x00, g = 0xFF, b = 0xFF }  --00FFFF
+            },
+            {
+                name = "Modern",
+                [PANTS]  = { r = 0xF1, g = 0x66, b = 0x2F }, --F1662F
+                [SHIRT]  = { r = 0xFF, g = 0xD0, b = 0x1C }, --FFD01C
+                [GLOVES] = { r = 0xFE, g = 0xFF, b = 0xFF }, --FEFFFF
+                [SHOES]  = { r = 0x25, g = 0xBD, b = 0x8C }, --25BD8C
+                [HAIR]   = { r = 0xCF, g = 0x55, b = 0x0C }, --CF550C
+                [SKIN]   = { r = 0xFD, g = 0xAE, b = 0x82 }, --FDAE82
+                [CAP]    = { r = 0xE4, g = 0xA3, b = 0x49 }, --E4A349
+                [EMBLEM] = { r = 0x25, g = 0xBD, b = 0x8C }, --25BD8C
+            },
+
+            {
+                name = "Chai",
+                [PANTS]  = { r = 0xF7, g = 0xEA, b = 0x6E }, --f7ea6e
+                [SHIRT]  = { r = 0x9B, g = 0xDF, b = 0x7C }, --9bdf7c
+                [GLOVES] = { r = 0x69, g = 0xB2, b = 0x89 }, --69b289
+                [SHOES]  = { r = 0xCE, g = 0x53, b = 0xB2 }, --ce53b2
+                [HAIR]   = { r = 0xFF, g = 0x61, b = 0x00 }, --FF6100
+                [SKIN]   = { r = 0xFD, g = 0xAE, b = 0x82 }, --FDAE82
+                [CAP]    = { r = 0xF7, g = 0xEA, b = 0x6E }, --f7ea6e
+                [EMBLEM] = { r = 0xCE, g = 0x53, b = 0xB2 }  --ce53b2
+            },
+
+            {
+                name = "LCD",
+                [PANTS]  = { r = 0xA8, g = 0xA8, b = 0xA8 }, --A8A8A8
+                [SHIRT]  = { r = 0x50, g = 0x50, b = 0x50 }, --505050
+                [GLOVES] = { r = 0x50, g = 0x50, b = 0x50 }, --505050
+                [SHOES]  = { r = 0xA8, g = 0xA8, b = 0xA8 }, --A8A8A8
+                [HAIR]   = { r = 0x16, g = 0x16, b = 0x16 }, --161616
+                [SKIN]   = { r = 0xA8, g = 0xA8, b = 0xA8 }, --A8A8A8
+                [CAP]    = { r = 0x50, g = 0x50, b = 0x50 }, --505050
+                [EMBLEM] = { r = 0xA8, g = 0xA8, b = 0xA8 }, --A8A8A8
+            },
+
         },
         voices = {
             [CHAR_SOUND_ATTACKED] = {'daisy_attacked_1.ogg','daisy_attacked_2.ogg','daisy_attacked_3.ogg'},
@@ -639,6 +744,39 @@ extraCharacters = {
                 [SKIN]   = { r = 0xFE, g = 0xC1, b = 0x79 }, --FEC179
                 [CAP]    = { r = 0xFE, g = 0x4D, b = 0x7F }, --FE4D7F
                 [EMBLEM] = { r = 0xFF, g = 0x00, b = 0x00 }  --FF0000
+            },
+            {
+                name = "Green",
+                [PANTS]  = { r = 0xFD, g = 0xE4, b = 0x00 }, --FDE400
+                [SHIRT]  = { r = 0xA4, g = 0xE7, b = 0x84 }, --A4E784
+                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF }, --FFFFFF
+                [SHOES]  = { r = 0xA4, g = 0xE7, b = 0x84 }, --A4E784
+                [HAIR]   = { r = 0xC9, g = 0x18, b = 0x12 }, --C91812
+                [SKIN]   = { r = 0xE8, g = 0x8F, b = 0xFF }, --E88FFF
+                [CAP]    = { r = 0xA4, g = 0xE7, b = 0x84 }, --A4E784
+                [EMBLEM] = { r = 0x72, g = 0xFF, b = 0xFF }  --72FFFF
+            },
+            {
+                name = "Red",
+                [PANTS]  = { r = 0xFF, g = 0x5E, b = 0xC9 }, --FF0000
+                [SHIRT]  = { r = 0xEB, g = 0x19, b = 0x05 }, --FE4D7F
+                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF }, --FFFFFF
+                [SHOES]  = { r = 0xEB, g = 0x19, b = 0x05 }, --FE4D7F
+                [HAIR]   = { r = 0xC9, g = 0x18, b = 0x12 }, --FF0000
+                [SKIN]   = { r = 0xE8, g = 0x8F, b = 0xFF }, --FEC179
+                [CAP]    = { r = 0xEB, g = 0x19, b = 0x05 }, --FE4D7F
+                [EMBLEM] = { r = 0x72, g = 0xFF, b = 0xFF }  --FF0000
+            },
+            {
+                name = "Grey",
+                [PANTS]  = { r = 0xCF, g = 0xCF, b = 0xCF }, --CFCFCF
+                [SHIRT]  = { r = 0x64, g = 0x64, b = 0x64 }, --646464
+                [GLOVES] = { r = 0xFF, g = 0xFF, b = 0xFF }, --FFFFFF
+                [SHOES]  = { r = 0x64, g = 0x64, b = 0x64 }, --646464
+                [HAIR]   = { r = 0x46, g = 0x8B, b = 0xCC }, --468BCC
+                [SKIN]   = { r = 0x64, g = 0x64, b = 0x64 }, --646464
+                [CAP]    = { r = 0x64, g = 0x64, b = 0x64 }, --646464
+                [EMBLEM] = { r = 0x64, g = 0x64, b = 0x64 }  --646464
             }
         },
         voices = {
