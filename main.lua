@@ -1694,6 +1694,28 @@ extraCharacters = {
                 [EMBLEM] = { r = 0x00, g = 0x00, b = 0xff }, -- 0000FF
             },
             {
+                name     = "Mirror",
+                [PANTS]  = { r = 0x55, g = 0x55, b = 0x55 }, -- 555555
+                [SHIRT]  = { r = 0xcc, g = 0xcc, b = 0xcc }, -- cccccc
+                [GLOVES] = { r = 0xcc, g = 0xcc, b = 0xcc }, -- cccccc
+                [SHOES]  = { r = 0x55, g = 0x55, b = 0x55 }, -- 555555
+                [HAIR]   = { r = 0xcc, g = 0xcc, b = 0xcc }, -- cccccc
+                [SKIN]   = { r = 0xcc, g = 0xcc, b = 0xcc }, -- cccccc
+                [CAP]    = { r = 0x55, g = 0x55, b = 0x55 }, -- 555555
+                [EMBLEM] = { r = 0x55, g = 0x55, b = 0x55 }, -- 555555
+            },
+            {
+                name     = "Ashura",
+                [PANTS]  = { r = 0x00, g = 0x00, b = 0xff }, -- FFFF00
+                [SHIRT]  = { r = 0xff, g = 0xb4, b = 0x93 }, -- ffb493
+                [GLOVES] = { r = 0xff, g = 0xff, b = 0xff }, -- FFFFFF
+                [SHOES]  = { r = 0xff, g = 0x90, b = 0x00 }, -- ff9000
+                [HAIR]   = { r = 0xff, g = 0xff, b = 0x00 }, -- FFFF00
+                [SKIN]   = { r = 0xff, g = 0xb4, b = 0x93 }, -- ffb493
+                [CAP]    = { r = 0x49, g = 0xfc, b = 0x00 }, -- 49fc00
+                [EMBLEM] = { r = 0x00, g = 0x00, b = 0x00 }, -- 0000FF
+            },
+            {
                 name     = "Super Sonic",
                 [PANTS]  = { r = 0xff, g = 0xff, b = 0x00 }, -- FFFF00
                 [SHIRT]  = { r = 0xfe, g = 0xc1, b = 0x79 }, -- FEC179
