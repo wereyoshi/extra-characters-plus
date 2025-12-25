@@ -14,10 +14,18 @@ end
 
 ---@param o Object
 local function bhv_spin_attack_loop(o)
+
+    -- Retrieves the Mario state corresponding to its global index
+    local m = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
+    if m == nil or m.marioObj == nil then
+        obj_mark_for_deletion(o)
+        return
+    end
+
+    o.parentObj = m.marioObj                     -- Sets the Mario object as its parent
     cur_obj_set_pos_relative_to_parent(0, 20, 0) -- Makes it move to its parent's position
 
     o.oFaceAngleYaw = o.oFaceAngleYaw + 0x2000   -- Rotates it
-    local m = get_mario_state_from_object(o.parentObj)
 
     if m.action ~= ACT_JUMP_TWIRL or o.oTimer > 15 then -- Deletes itself once the action changes
         obj_mark_for_deletion(o)
@@ -62,10 +70,11 @@ function act_jump_twirl(m)
             e.rosalina.canSpin = false
 
             -- Spawn the spin effect
-            spawn_sync_object(id_bhvTwirlEffect, E_MODEL_TWIRL_EFFECT, m.pos.x, m.pos.y, m.pos.z, function(o)
-                o.parentObj = m.marioObj
-                o.globalPlayerIndex = m.marioObj.globalPlayerIndex
-            end)
+            if m.playerIndex == 0 then
+                spawn_sync_object(id_bhvTwirlEffect, E_MODEL_TWIRL_EFFECT, m.pos.x, m.pos.y, m.pos.z, function(o)
+                    o.globalPlayerIndex = m.marioObj.globalPlayerIndex
+                end)
+            end
         else
             m.vel.y = max(m.vel.y, 0)
         end
