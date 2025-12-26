@@ -34,7 +34,7 @@ function torso_tilt_reset(m)
     if m.marioBodyState.allowPartRotation == 1 then
         vec3s_copy(m.marioBodyState.torsoAngle, gVec3sZero())
         vec3s_copy(m.marioBodyState.headAngle, gVec3sZero())
-        m.marioBodyState.allowPartRotation = false -- Works, not going to deep into it, c values interpret true and false as 1 and 0, lua doesn't so always check for a number in lua
+        m.marioBodyState.allowPartRotation = false
     end
 end
 
