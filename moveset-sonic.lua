@@ -1,3 +1,5 @@
+local SOUND_COUNTDOWN_CD = audio_sample_load("countdown.ogg") -- Load audio sample
+
 -------------------
 -- Sonic Moveset --
 -------------------
