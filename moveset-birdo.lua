@@ -215,10 +215,9 @@ local function act_spit_egg_walk(m)
 
         mBody.allowPartRotation = true
         m.marioObj.header.gfx.angle.y = m.intendedYaw
-        m.marioObj.header.gfx.animInfo.curAnim.flags = m.marioObj.header.gfx.animInfo.curAnim.flags & ~ANIM_FLAG_BACKWARD
         if math.abs(dYaw) > 0x4000 then
             m.marioObj.header.gfx.angle.y = m.intendedYaw - 0x8000
-            m.marioObj.header.gfx.animInfo.curAnim.flags = ANIM_FLAG_BACKWARD
+            m.marioObj.header.gfx.animInfo.animAccel = -math.abs(m.marioObj.header.gfx.animInfo.animAccel)
         end
 
         mBody.torsoAngle.y = math.s16(m.faceAngle.y - m.marioObj.header.gfx.angle.y) * 0.4
