@@ -10,8 +10,6 @@ DONKEY_KONG_ROLL_DECAY_TIME = 10
 DONKEY_KONG_ROLL_STARTUP = 4
 DONKEY_KONG_ROLL_END = 25
 
-DK_ANIM_CLIMBING = 'donkey_custom_climbing'
-
 ----------------
 -- DK Gravity --
 ----------------
@@ -475,3 +473,101 @@ end
 hook_mario_action(ACT_DONKEY_KONG_POUND, { every_frame = act_donkey_kong_pound })
 
 hook_mario_action(ACT_DONKEY_KONG_POUND_HIT, { every_frame = act_donkey_kong_pound }, INT_GROUND_POUND) -- same action but with ground pound interaction
+
+-----------------------
+--- Donkey Climbing ---
+--- -------------------
+
+DK_ANIM_CLIMBING = 'donkey_custom_climbing'
+
+ACT_DONKEY_CLIMB = allocate_mario_action(ACT_FLAG_AIR | ACT_GROUP_AIRBORNE)
+
+-- Climbing ability action
+--- @param m MarioState
+function act_donkey_climb(m)
+    --No wall, no climb
+    if m.wall == nil then
+        set_mario_action(m, ACT_JUMP, 0)
+        mario_set_forward_vel(m, 10)
+        return true
+
+    --Press A to jump off
+    elseif (m.input & INPUT_A_PRESSED) ~= 0 then
+        set_mario_action(m, ACT_JUMP, 0)
+        m.faceAngle.y = m.faceAngle.y - 0x8000
+        mario_set_forward_vel(m, 20)
+        return true
+
+    --Press Z to just fall off
+    elseif (m.input & INPUT_Z_PRESSED) ~= 0 then
+        m.input = m.input &~ INPUT_Z_PRESSED
+        play_character_sound(m, CHAR_SOUND_UH)
+
+        mario_set_forward_vel(m, -8)
+        return set_mario_action(m, ACT_FREEFALL, 0)
+    end
+
+    --Woah!
+    if m.actionTimer == 0 then
+        play_character_sound(m, CHAR_SOUND_WHOA)
+    end
+
+    local wallangle = atan2s(m.wallNormal.z, m.wallNormal.x) + 0x8000
+    local transwall
+    if m.actionTimer >= 4 then
+        --Face beside wall and move around it
+        m.faceAngle.y = wallangle - 0x4000
+        mario_set_forward_vel(m, m.controller.stickX/3)
+        m.vel.y = m.controller.stickY/3
+
+        --Perform air step
+        local air_step = perform_air_step(m, 0)
+        transwall = m.wall
+        if air_step == AIR_STEP_LANDED then
+            return set_mario_action(m, ACT_FREEFALL_LAND, 0)
+        end
+    end
+
+    --Face directly towards wall to make sure we're latched on
+    m.faceAngle.y = wallangle
+    mario_set_forward_vel(m, 1)
+    m.vel.y = 0
+
+    --Perform air step
+    air_step = perform_air_step(m, 0)
+    if air_step == AIR_STEP_LANDED then
+        return set_mario_action(m, ACT_FREEFALL_LAND, 0)
+    elseif m.wall == nil then
+        if transwall == nil then
+            set_mario_action(m, ACT_JUMP, 0)
+            mario_set_forward_vel(m, 10)
+            return true
+        else
+            m.wall = transwall
+        end
+    end
+
+    --Climbing animation
+    if m.actionTimer < 8 then
+        set_mario_animation(m, MARIO_ANIM_START_CRAWLING)
+    else
+        set_mario_anim_with_accel(m, MARIO_ANIM_CRAWLING, m.intendedMag * 0x6000)
+        if m.intendedMag == 0 then
+            set_anim_to_frame(m, 0)
+        else
+            m.particleFlags = m.particleFlags | PARTICLE_DUST
+
+            m.terrainSoundAddend = SOUND_TERRAIN_SAND << 16
+            play_step_sound(m, 26, 79)
+
+            if m.wall.type == SURFACE_BURNING then
+                spawn_non_sync_object(id_bhvKoopaShellFlame, E_MODEL_RED_FLAME, m.pos.x, m.pos.y, m.pos.z, function() end)
+            end
+        end
+    end
+    m.marioObj.header.gfx.angle.x = 0xC000
+    m.marioObj.header.gfx.animInfo.animYTrans = -256
+
+    m.actionTimer = m.actionTimer + 1
+end
+hook_mario_action(ACT_DONKEY_CLIMB, {every_frame = act_donkey_climb, gravity = function() end})
