@@ -1877,6 +1877,7 @@ local ultraBrosCredits = {
         "FluffaMario,Models",
         "EmilyEmmi,Moveset",
         "Wibblus,Moveset",
+        "SwagSkeleton95,Moveset",
         "steven3004,Moveset, Coder",
         "PeachyPeach,Moveset, Coder",
         "Squishy6094,CS Coder",
