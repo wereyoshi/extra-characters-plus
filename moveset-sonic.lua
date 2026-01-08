@@ -10,6 +10,7 @@ local sPrevRings = 0
 local sPowerTimer = 0
 local sRingTimeBetweenDamages = 0
 local sRingFlingFactor = 0
+local sPrevNonSonicHealth = nil
 
 -- Sonic actions
 _G.ACT_SPIN_JUMP          = allocate_mario_action(ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_CONTROL_JUMP_HEIGHT | ACT_FLAG_AIR | ACT_GROUP_AIRBORNE | ACT_FLAG_ATTACKING)
@@ -1215,7 +1216,7 @@ function sonic_update(m)
         for objList = 0, NUM_OBJ_LISTS - 1 do
             local obj = obj_get_first(objList)
             while obj ~= nil do
-                if (obj_is_attackable(obj) or obj_is_breakable_object(obj) or obj_has_behavior_id(obj, id_bhvBobomb) ~= 0) then
+                if (obj_is_attackable(obj) or obj_is_bully(obj) or obj_is_breakable_object(obj) or obj_has_behavior_id(obj, id_bhvBobomb) ~= 0) then
                     if (dist_between_objects(m.marioObj, obj) <= 280 and obj_is_valid_for_interaction(obj)) then
 
                         -- Kicks the object and send it flying
@@ -1246,6 +1247,20 @@ function sonic_update(m)
     e.sonic.instashieldTimer = e.sonic.instashieldTimer - 1
 end
 
+local function sonic_set_alive(m)
+    if m.playerIndex == 0 and sPrevNonSonicHealth == nil then
+        sPrevNonSonicHealth = m.health
+    end
+    m.health = 0x880
+end
+
+local function sonic_set_dead(m)
+    if m.playerIndex == 0 then
+        sPrevNonSonicHealth = nil
+    end
+    m.health = 0xFF
+end
+
 function sonic_things_for_non_sonic_chars(m)
     -- Only run for the local player.
     if m.playerIndex ~= 0 then return end
@@ -1253,6 +1268,12 @@ function sonic_things_for_non_sonic_chars(m)
     -- Clear rings even when you're not Sonic.
     if m.hurtCounter > 0 then
         gPlayerSyncTable[0].rings = 0
+    end
+
+    -- Restore previous health if not Sonic
+    if sPrevNonSonicHealth ~= nil and character_get_current_number() ~= CT_SONIC then
+        m.health = sPrevNonSonicHealth
+        sPrevNonSonicHealth = nil
     end
 
     -- Reenable the vanilla power meter when the moveset is off.
@@ -1278,7 +1299,7 @@ function sonic_drowning(m, e)
     }
 
     if e.sonic.oxygen <= 0 then
-        m.health = 0xFF
+        sonic_set_dead(m)
 
         -- Empty rings and hide rings meter
         if m.playerIndex == 0 then
@@ -1295,7 +1316,7 @@ function sonic_drowning(m, e)
     end
 
     if m.pos.y + m.marioObj.hitboxHeight - 50 < m.waterLevel or (m.input & INPUT_IN_POISON_GAS) ~= 0 then
-        m.health = 0x880
+        sonic_set_alive(m)
         e.sonic.oxygen = e.sonic.oxygen - 1
 
         if warning[e.sonic.oxygen] then
@@ -1320,7 +1341,9 @@ function sonic_ring_health(m, e)
 
     -- Set health to max to hide the regular health meter
     if m.health > 0xFF then
-        m.health = 0x880
+        sonic_set_alive(m)
+    else
+        sonic_set_dead(m)
     end
 
     if m.hurtCounter > 0 then
@@ -1349,9 +1372,9 @@ function sonic_ring_health(m, e)
                     end
                 )
             end
-            m.health = 0x880
+            sonic_set_alive(m)
         else
-            m.health = 0xFF
+            sonic_set_dead(m)
         end
 
         if sRingTimeBetweenDamages > 0 then sRingFlingFactor = sRingFlingFactor + 1 end
@@ -1370,7 +1393,7 @@ function sonic_ring_health(m, e)
 
     if burnActions[m.action] then
         if sPrevRings > 0 then
-            m.health = 0x880
+            sonic_set_alive(m)
         end
         if gPlayerSyncTable[0].rings > 0 then
             spawn_sync_object(
@@ -1388,9 +1411,9 @@ function sonic_ring_health(m, e)
 
         if m.action == ACT_BURNING_JUMP then
             if sPrevRings == 0 then
-                m.health = 0xFF
+                sonic_set_dead(m)
             else
-                m.health = 0x880
+                sonic_set_alive(m)
             end
         end
     end

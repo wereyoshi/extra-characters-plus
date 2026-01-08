@@ -140,11 +140,10 @@ local function mario_anim_play_custom(m, animName, animAccel)
     m.marioObj.header.gfx.animInfo.animAccel = animAccel or 0x10000
 end
 
--- Hacky way to get Pauline
 local function get_pauline()
     for i = 1, #extraCharacters do
         local extraCharacter = extraCharacters[i]
-        if extraCharacter.name == "Pauline" then
+        if extraCharacter.tablePos == CT_PAULINE then
             return extraCharacter
         end
     end
@@ -152,7 +151,7 @@ local function get_pauline()
 end
 
 local function is_pauline(m)
-    return character_get_current_number(m.playerIndex) == get_pauline().tablePos
+    return character_get_current_number(m.playerIndex) == CT_PAULINE
 end
 
 -----------
