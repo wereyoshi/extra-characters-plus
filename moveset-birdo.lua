@@ -802,6 +802,20 @@ function birdo_egg_interaction(o, egg)
     end
 end
 
+-- prevent player interaction with Birdo's egg if player interaction is not pvp (owner still interacts)
+---@param m MarioState
+---@param o Object
+---@param type integer
+function player_egg_allow_interact(m, o, type)
+    if obj_has_behavior_id(o, id_bhvBirdoEgg) ~= 0 then
+        local m2 = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
+        if m.playerIndex ~= m2.playerIndex and gServerSettings.playerInteractions ~= PLAYER_INTERACTIONS_PVP then
+            return false
+        end
+    end
+end
+hook_event(HOOK_ALLOW_INTERACT, player_egg_allow_interact)
+
 -- returns true if this object can be hit by birdo's fireball
 function birdo_fire_is_targettable(o, egg)
     if o.oInteractType == INTERACT_PLAYER then

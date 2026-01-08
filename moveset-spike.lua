@@ -304,9 +304,14 @@ function bhv_spike_bomb_loop(o)
                 obj_set_hitbox(o, hitbox)
                 bhv_explosion_init()
             end
-            -- deal damage based on distance to explosion
-            local dist = lateral_dist_between_objects(o, gMarioStates[0].marioObj)
-            o.oDamageOrCoinValue = math.ceil(math.clamp(1 - (dist / (200 * SCALE_TO_BOBOMB)), 0, 1) * 4)
+
+            if m.playerIndex == 0 or gServerSettings.playerInteractions == PLAYER_INTERACTIONS_PVP then
+                -- deal damage based on distance to explosion
+                local dist = lateral_dist_between_objects(o, gMarioStates[0].marioObj)
+                o.oDamageOrCoinValue = math.ceil(math.clamp(1 - (dist / (200 * SCALE_TO_BOBOMB)), 0, 1) * 4)
+            else
+                o.oDamageOrCoinValue = 0 -- deal no damage
+            end
 
             if o.oTimer == 9 then
                 bhv_explosion_loop()
@@ -476,6 +481,20 @@ function player_bomb_interact(m, o, type, value)
     end
 end
 hook_event(HOOK_ON_INTERACT, player_bomb_interact)
+
+-- prevent player interaction with Spike's bomb if player interaction is off (owner still interacts)
+---@param m MarioState
+---@param o Object
+---@param type integer
+function player_bomb_allow_interact(m, o, type)
+    if obj_has_behavior_id(o, id_bhvSpikeBomb) ~= 0 and type == INTERACT_DAMAGE then
+        local m2 = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
+        if m.playerIndex ~= m2.playerIndex and gServerSettings.playerInteractions == PLAYER_INTERACTIONS_NONE then
+            return false
+        end
+    end
+end
+hook_event(HOOK_ALLOW_INTERACT, player_bomb_allow_interact)
 
 -- handle other object interactions with spike's bomb
 ---@param o Object
