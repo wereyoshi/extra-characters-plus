@@ -388,6 +388,14 @@ function bhv_spike_hammer_loop(o)
         cur_obj_play_sound_1(SOUND_ACTION_SIDE_FLIP_UNK)
     end
 
+    -- Don't do damage to others unless PVP is on
+    local m = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
+    if m.playerIndex ~= 0 and gServerSettings.playerInteractions ~= PLAYER_INTERACTIONS_PVP then
+        o.oDamageOrCoinValue = 0
+    else
+        o.oDamageOrCoinValue = 2
+    end
+
     o.oMoveAnglePitch = o.oMoveAnglePitch + 0x1000
 
     -- object collision
@@ -486,15 +494,15 @@ hook_event(HOOK_ON_INTERACT, player_bomb_interact)
 ---@param m MarioState
 ---@param o Object
 ---@param type integer
-function player_bomb_allow_interact(m, o, type)
-    if obj_has_behavior_id(o, id_bhvSpikeBomb) ~= 0 and type == INTERACT_DAMAGE then
+function player_bomb_hammer_allow_interact(m, o, type)
+    if (obj_has_behavior_id(o, id_bhvSpikeBomb) ~= 0 or obj_has_behavior_id(o, id_bhvSpikeHammer) ~= 0) and type == INTERACT_DAMAGE then
         local m2 = gMarioStates[network_local_index_from_global(o.globalPlayerIndex)]
         if m.playerIndex ~= m2.playerIndex and gServerSettings.playerInteractions == PLAYER_INTERACTIONS_NONE then
             return false
         end
     end
 end
-hook_event(HOOK_ALLOW_INTERACT, player_bomb_allow_interact)
+hook_event(HOOK_ALLOW_INTERACT, player_bomb_hammer_allow_interact)
 
 -- handle other object interactions with spike's bomb
 ---@param o Object
