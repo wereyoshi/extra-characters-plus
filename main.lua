@@ -14,9 +14,13 @@ end
 -- Additional Voicelines used for Characters
 YOSHI_SOUND_FLUTTER = CHAR_SOUND_MAX + 1
 
--- Edit Model for Sonic
---local E_MODEL_SUPERSONIC = smlua_model_util_get_id("segasupersonic_geo"),
-
+GAMEMODE_ACTIVE = false
+for i in pairs(gActiveMods) do
+    local mod = gActiveMods[i]
+    if (mod.incompatible and mod.incompatible:find("gamemode")) or (mod.category and mod.category:find("gamemode")) then
+        GAMEMODE_ACTIVE = true
+    end
+end
 
 -- Characters are stored in a table for ease of addition
 

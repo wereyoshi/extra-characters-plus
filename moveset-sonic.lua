@@ -41,20 +41,6 @@ local CUSTOM_CHAR_ANIM_SONIC_SPRING_RISE = 'sonic_spring'
 local CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL = 'sonic_spring_fall'
 local CUSTOM_CHAR_ANIM_SONIC_BEFORE_GROUND_POUND = 'sonic_before_ground_pound'
 
--- Custom Rings meter HUD
-local RingMeterHUD = {
-    animation = 0,
-    y = 0,
-    prevY = 0,
-    visibleTimer = 0
-}
-
-local RING_METER_HIDDEN = 0
-local RING_METER_EMPHASIZING = 1
-local RING_METER_DEEMPHASIZING = 2
-local RING_METER_HIDING = 3
-local RING_METER_VISIBLE = 4
-
 local l = gLakituState
 
 --- @param m MarioState
@@ -1318,7 +1304,6 @@ function sonic_drowning(m, e)
         -- Empty rings and hide rings meter
         if m.playerIndex == 0 then
             gPlayerSyncTable[m.playerIndex].rings = 0
-            RingMeterHUD.animation = RING_METER_HIDDEN
         end
 
         if (m.input & INPUT_IN_POISON_GAS) ~= 0 then
@@ -1365,10 +1350,8 @@ function sonic_ring_health(m, e)
         if gPlayerSyncTable[m.playerIndex].rings > 32 then gPlayerSyncTable[m.playerIndex].rings = 32 end
         m.hurtCounter = 0
 
-        djui_chat_message_create(tostring(gPlayerSyncTable[m.playerIndex].rings))
         if gPlayerSyncTable[m.playerIndex].rings > 0 then
             for i = 0, gPlayerSyncTable[m.playerIndex].rings - 1, 1 do
-                djui_chat_message_create(tostring(i))
 
                 -- Near ground, send rings upwards only
                 local minY, maxY, flingFactorY
@@ -1441,8 +1424,7 @@ end
 function sonic_value_refresh(m)
     local e = gCharacterStates[m.playerIndex]
     e.sonic.oxygen = 900
-    gPlayerSyncTable[m.playerIndex].rings = 0
-    RingMeterHUD.animation = RING_METER_HIDDEN
+    gPlayerSyncTable[m.playerIndex].rings = GAMEMODE_ACTIVE and 10 or 0
 end
 
 function sonic_on_level_init()
