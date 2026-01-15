@@ -1204,8 +1204,6 @@ function sonic_update(m)
         m.actionTimer = m.actionTimer + 1
     end
 
-    if (m.input & INPUT_ABOVE_SLIDE) ~= 0 then djui_chat_message_create("true") end
-
     if (m.action & ACT_FLAG_AIR) == 0 and m.action ~= ACT_BOUNCE_LAND then
         e.sonic.actionADone = false
         e.sonic.actionBDone = false
