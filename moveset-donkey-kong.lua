@@ -339,10 +339,12 @@ end
 local function apply_donkey_kong_gravity(m)
     if m.action == ACT_TWIRLING and m.vel.y < 0.0 then
         apply_donkey_kong_twirl_gravity(m)
+    elseif m.action == ACT_TRIPLE_JUMP then
+        m.vel.y = math.max(-140, m.vel.y - 3.5)
     elseif m.action == ACT_SHOT_FROM_CANNON then
         m.vel.y = math.max(-75, m.vel.y - 1)
     elseif m.action == ACT_LONG_JUMP or m.action == ACT_SLIDE_KICK or m.action == ACT_BBH_ENTER_SPIN then
-        m.vel.y = math.max(-75, m.vel.y - 3.0)
+        m.vel.y = math.max(-75, m.vel.y - 2)
     elseif m.action == ACT_LAVA_BOOST or m.action == ACT_FALL_AFTER_STAR_GRAB then
         m.vel.y = math.max(-65, m.vel.y - 4.8)
     elseif m.action == ACT_GETTING_BLOWN then
