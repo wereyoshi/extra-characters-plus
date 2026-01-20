@@ -250,3 +250,12 @@ function custom_dkroll_switch(n)
         switch.selectedCase = 0
     end
 end
+
+-- Yoshi Tongue Head Switch --
+
+--- @param n GraphNode | FnGraphNode
+--- Switches Yoshi Heads 
+function custom_yoshi_heads(n)
+    local switch = cast_graph_node(n)
+    local m = geo_get_mario_state()
+end

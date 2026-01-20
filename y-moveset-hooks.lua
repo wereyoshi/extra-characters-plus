@@ -74,6 +74,27 @@ local function on_character_select_load()
     _G.CT_DONKEY_KONG  = extraCharacters[10].tablePos       --- @type CharacterType
     _G.CT_SONIC        = extraCharacters[11].tablePos       --- @type CharacterType
 
+    -- Mario
+    character_hook_moveset(CT_MARIO, HOOK_MARIO_UPDATE, char_update)
+    character_hook_moveset(CT_MARIO, HOOK_ON_SET_MARIO_ACTION, char_on_set_action)
+    -- Luigi
+    character_hook_moveset(CT_LUIGI, HOOK_MARIO_UPDATE, char_update)
+    character_hook_moveset(CT_LUIGI, HOOK_BEFORE_PHYS_STEP, char_before_phys_step)
+    character_hook_moveset(CT_LUIGI, HOOK_ON_SET_MARIO_ACTION, char_on_set_action)
+    -- Toad
+    character_hook_moveset(CT_TOAD, HOOK_MARIO_UPDATE, char_update)
+    character_hook_moveset(CT_TOAD, HOOK_BEFORE_PHYS_STEP, char_before_phys_step)
+    character_hook_moveset(CT_TOAD, HOOK_ON_SET_MARIO_ACTION, char_on_set_action)
+    -- Waluigi
+    character_hook_moveset(CT_WALUIGI, HOOK_MARIO_UPDATE, char_update)
+    character_hook_moveset(CT_WALUIGI, HOOK_BEFORE_PHYS_STEP, char_before_phys_step)
+    character_hook_moveset(CT_WALUIGI, HOOK_ON_SET_MARIO_ACTION, char_on_set_action)
+    -- Wario
+    character_hook_moveset(CT_WARIO, HOOK_MARIO_UPDATE, char_update)
+    character_hook_moveset(CT_WARIO, HOOK_BEFORE_PHYS_STEP, char_before_phys_step)
+    character_hook_moveset(CT_WARIO, HOOK_ON_SET_MARIO_ACTION, char_on_set_action)
+    character_hook_moveset(CT_WARIO, HOOK_ON_INTERACT, on_interact)
+    character_hook_moveset(CT_WARIO, HOOK_ON_PVP_ATTACK, on_pvp_attack)
     -- Toadette
     character_hook_moveset(CT_TOADETTE, HOOK_MARIO_UPDATE, toadette_update)
     character_hook_moveset(CT_TOADETTE, HOOK_ON_SET_MARIO_ACTION, toadette_on_set_action)
