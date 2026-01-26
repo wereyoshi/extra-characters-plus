@@ -4,6 +4,8 @@
 
 if not charSelect then return end
 
+require "anims/toadette"
+
 function toadette_before_phys_step(m)
     local hScale = 1.0
     local vScale = 1.0

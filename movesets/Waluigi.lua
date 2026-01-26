@@ -1,4 +1,5 @@
 require "vanilla-chars"
+require "anims/waluigi"
 
 return {
     { HOOK_MARIO_UPDATE, char_update },
