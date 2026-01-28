@@ -23,20 +23,20 @@ end
 -- Sonic Spin/Ball Acts --
 
 local sSonicSpinBallActs = {
-    [ACT_SPIN_JUMP]        = true,
-    [ACT_SPIN_DASH]        = true,
-    [ACT_AIR_SPIN]         = true,
-    [ACT_HOMING_ATTACK]    = true,
+    [ACT_SONIC_SPIN_JUMP]        = true,
+    [ACT_SONIC_SPIN_DASH]        = true,
+    [ACT_SONIC_AIR_SPIN]         = true,
+    [ACT_SONIC_HOMING_ATTACK]    = true,
 }
 
 
 local sSonicInstashieldActs = {
-    [ACT_SPIN_JUMP]        = true,
-    [ACT_AIR_SPIN]         = true,
+    [ACT_SONIC_SPIN_JUMP]        = true,
+    [ACT_SONIC_AIR_SPIN]         = true,
 }
 
 local sSonicSpinDashActs = {
-    [ACT_SPIN_DASH_CHARGE] = true,
+    [ACT_SONIC_SPIN_DASH_CHARGE] = true,
 }
 
 --- @param n GraphNode | FnGraphNode
