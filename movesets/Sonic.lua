@@ -215,7 +215,7 @@ local function update_sonic_running_speed(m)
 
     if (m.floor and m.floor.type == SURFACE_SLOW) then
         maxTargetSpeed = 48
-    elseif sSlowDownBoots == true then
+    elseif sSlowDownBoots then
         maxTargetSpeed = 40
     else
         maxTargetSpeed = 64
@@ -716,11 +716,10 @@ local function act_air_spin(m)
 
     if m.actionArg == 1 then -- Air dash and wall bounce.
         if not e.actionADone then
-            if sSlowDownBoots == false then
-                e.prevForwardVel = m.forwardVel
-                audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
-                m.vel.y = 0
-
+            e.prevForwardVel = m.forwardVel
+            audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
+            m.vel.y = 0
+            if not sSlowDownBoots then
                 if m.forwardVel < 0 then
                     m.vel.x = m.vel.x + 30 * sins(m.faceAngle.y)
                     m.vel.z = m.vel.z + 30 * coss(m.faceAngle.y)
@@ -728,14 +727,7 @@ local function act_air_spin(m)
                     m.vel.x = m.vel.x + 20 * sins(m.faceAngle.y)
                     m.vel.z = m.vel.z + 20 * coss(m.faceAngle.y)
                 end
-
-                m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
-                e.actionADone = true
             else
-                e.prevForwardVel = m.forwardVel
-                audio_sample_play(SOUND_SPIN_RELEASE, m.pos, 1)
-                m.vel.y = 0
-
                 if m.forwardVel < 0 then
                     m.vel.x = m.vel.x + 20 * sins(m.faceAngle.y)
                     m.vel.z = m.vel.z + 20 * coss(m.faceAngle.y)
@@ -743,10 +735,9 @@ local function act_air_spin(m)
                     m.vel.x = m.vel.x + 10 * sins(m.faceAngle.y)
                     m.vel.z = m.vel.z + 10 * coss(m.faceAngle.y)
                 end
-
-                m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
-                e.actionADone = true
             end
+            m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
+            e.actionADone = true
         end
 
         if m.actionTimer < 10 then
@@ -1113,13 +1104,8 @@ local function act_bounce_land(m)
 
     -- Changes Bounce Height
     audio_sample_play(SOUND_SONIC_BOUNCE, m.pos, 1)
-    if sSlowDownBoots == false then
-        set_sonic_jump_vel(m, 85)
-        return set_mario_action(m, ACT_SONIC_AIR_SPIN, 0)
-    else
-        set_sonic_jump_vel(m, 70)
-        return set_mario_action(m, ACT_SONIC_AIR_SPIN, 0)
-    end
+    set_sonic_jump_vel(m, sSlowDownBoots and 70 or 85)
+    return set_mario_action(m, ACT_SONIC_AIR_SPIN, 0)
 end
 
 local waterActions = {
@@ -2108,13 +2094,8 @@ function on_slow_boots_option_change(tag, oldVal, newVal)
     if newVal == nil then return end
 
     sSlowDownBoots = newVal
-    if sSlowDownBoots == false then
-        HEDGEHOG_SPEED = 128
-        HEDGEHOG_HEIGHT = 32
-    else
-        HEDGEHOG_SPEED = 64
-        HEDGEHOG_HEIGHT = 20
-    end
+    HEDGEHOG_SPEED  = sSlowDownBoots and 64 or 128
+    HEDGEHOG_HEIGHT = sSlowDownBoots and 20 or 32
 end
 hook_on_sync_table_change(gGlobalSyncTable, "slowDownBoots", "slowDownBoots", on_slow_boots_option_change)
 

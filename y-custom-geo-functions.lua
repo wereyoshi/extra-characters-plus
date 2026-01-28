@@ -44,10 +44,10 @@ local sSonicSpinDashActs = {
 function geo_ball_switch(n)
     local switch = cast_graph_node(n)
     local m = geo_get_mario_state()
-    local e = gCharacterStates[m.playerIndex]
+    local e = gCharacterStates[m.playerIndex].sonic
 
     if sSonicSpinBallActs[m.action] then
-        if sSonicInstashieldActs[m.action] and e.sonic.instashieldTimer > 0 then
+        if sSonicInstashieldActs[m.action] and e.instashieldTimer > 0 then
             switch.selectedCase = 4
         else
             switch.selectedCase = ((m.actionTimer - 1) % 4 // 2 + 1)
@@ -68,25 +68,17 @@ end
 function custom_slowdown_right(n)
     local switch = cast_graph_node(n)
     local m = geo_get_mario_state()
-    local e = gCharacterStates[m.playerIndex]
+    local e = gCharacterStates[m.playerIndex].sonic
 
-    if sSlowDownBoots == true then
-        switch.selectedCase = 1
-    else 
-        switch.selectedCase = 0
-    end
+    switch.selectedCase = sSlowDownBoots and 1 or 0
 end
 
 function custom_slowdown_left(n)
     local switch = cast_graph_node(n)
     local m = geo_get_mario_state()
-    local e = gCharacterStates[m.playerIndex]
+    local e = gCharacterStates[m.playerIndex].sonic
 
-    if sSlowDownBoots == true then
-        switch.selectedCase = 1
-    else
-        switch.selectedCase = 0
-    end
+    switch.selectedCase = sSlowDownBoots and 1 or 0
 end
 
 -- Spindash States --
@@ -96,9 +88,9 @@ end
 function geo_custom_spindash_states(n)
     local switch = cast_graph_node(n)
     local m = geo_get_mario_state()
-    local e = gCharacterStates[m.playerIndex]
+    local e = gCharacterStates[m.playerIndex].sonic
 
-    switch.selectedCase = math.floor(e.sonic.spindashState)
+    switch.selectedCase = math.floor(e.spindashState)
 end
 
 -- Mouth Switch --
