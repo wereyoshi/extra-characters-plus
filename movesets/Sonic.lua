@@ -46,6 +46,25 @@ local CUSTOM_CHAR_ANIM_SONIC_BEFORE_GROUND_POUND = 'sonic_before_ground_pound'
 
 local l = gLakituState
 
+--- @param t number
+function ease_out_quad(t)
+    return 1 - (1 - t) ^ 2
+end
+
+--- @param from Vec3f
+--- @param to Vec3f
+--- @return integer
+function pitch_to_point(from, to)
+    local a = to.x - from.x
+    local c = to.z - from.z
+    a = math.sqrt(a * a + c * c)
+
+    local b = -to.y
+    local d = -from.y
+
+    return atan2s(a, b - d)
+end
+
 --- @param m MarioState
 --- @param accel number
 --- @param lossFactor number
@@ -816,11 +835,7 @@ local function act_homing_attack(m)
         m.particleFlags = m.particleFlags + PARTICLE_VERTICAL_STAR
         local totalVel = math.sqrt(m.forwardVel ^ 2 + m.vel.y ^ 2)
 
-        if totalVel < 80 then
-            m.forwardVel = 80
-        elseif totalVel >= 80 and totalVel < 172 then
-            m.forwardVel = totalVel + 20
-        end
+        m.forwardVel = math.clamp(80, totalVel + 20, 172)
 
         m.faceAngle.y = yaw
     end
@@ -835,8 +850,9 @@ local function act_homing_attack(m)
     if stepResult == AIR_STEP_LANDED then
         if m.floor.object == o and o.oInteractType == INTERACT_BREAKABLE then
             m.vel.y = math.abs(m.vel.y)
+            set_mario_action(m, ACT_SONIC_FALL, 4 + math.random(4))
+            play_character_sound_offset(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE, math.fmod(math.random(3, 5), 5) << 16)
             o.oInteractStatus = ATTACK_GROUND_POUND_OR_TWIRL + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
-            set_mario_action(m, ACT_SONIC_FALL, 3)
         else
             if (m.controller.buttonDown & Z_TRIG) ~= 0 then
                 audio_sample_play(SOUND_ROLL, m.pos, 1)
@@ -948,7 +964,7 @@ local function act_spin_dash(m)
         set_mario_action(m, ACT_SONIC_AIR_SPIN, 0)
 
     elseif stepResult == GROUND_STEP_HIT_WALL then
-        if m.forwardVel > 16 then
+        if m.forwardVel > 64 then
             set_mario_particle_flags(m, PARTICLE_VERTICAL_STAR, 0)
             return slide_bonk(m, ACT_GROUND_BONK, ACT_GROUND_BONK)
         else
@@ -1032,6 +1048,8 @@ end
 function act_sonic_fall(m)
     local animation = 0
     local landAction = 0
+    local frame = m.marioObj.header.gfx.animInfo.animFrame
+    local c = gMarioStates[0].area.camera
 
     if (m.input & INPUT_A_PRESSED) ~= 0 then
         return perform_sonic_a_action(m)
@@ -1069,6 +1087,18 @@ function act_sonic_fall(m)
                 smlua_anim_util_set_animation(m.marioObj, CUSTOM_CHAR_ANIM_SONIC_SPRING_FALL)
             end
             m.faceAngle.x = 0
+        else
+            local animIndex = m.actionArg - 4
+            animation = CHAR_ANIM_DOUBLE_JUMP_FALL
+            smlua_anim_util_set_animation(m.marioObj, 'sonic_homing_pose_' .. animIndex)
+
+            if animIndex == 2 and in_between(frame, 8, 21, true) then
+                m.marioBodyState.eyeState = MARIO_EYES_LOOK_LEFT
+            elseif animIndex == 4 and frame <= 22 then
+                m.marioBodyState.eyeState = MARIO_EYES_LOOK_RIGHT
+            end
+
+            m.faceAngle.x = 0
         end
         landAction = ACT_FREEFALL_LAND
     else
@@ -1077,6 +1107,15 @@ function act_sonic_fall(m)
     end
 
     local stepResult = sonic_air_action_step(m, landAction, animation, AIR_STEP_CHECK_LEDGE_GRAB, true)
+
+    if m.actionArg == 8 and c then
+        local yaw = obj_angle_to_point(m.marioObj, c.pos.x, c.pos.z)
+        local pitch = pitch_to_point(m.marioObj.header.gfx.pos, c.pos)
+        local t = ease_out_quad(math.clamp((frame - 18) / 15, 0, 1))
+
+        m.marioObj.header.gfx.angle.x = math.lerp(pitch, 0, t)
+        m.marioObj.header.gfx.angle.y = math.lerp(yaw, m.faceAngle.y, t)
+    end
 
     if (m.controller.buttonDown & Z_TRIG) ~= 0 then
         if stepResult == AIR_STEP_LANDED then
@@ -1499,8 +1538,15 @@ function sonic_allow_interact(m, o, intType)
             if m.vel.y < 0 then
                 m.vel.y = math.abs(m.vel.y)
             end
-            set_mario_action(m, ACT_SONIC_FALL, 3)
+            set_mario_action(m, ACT_SONIC_FALL, 4 + math.random(4))
+            play_character_sound_offset(m, CHAR_SOUND_YAHOO_WAHA_YIPPEE, math.fmod(math.random(3, 5), 5) << 16)
             o.oInteractStatus = ATTACK_GROUND_POUND_OR_TWIRL + (INT_STATUS_INTERACTED | INT_STATUS_WAS_ATTACKED)
+            return false
+        end
+    end
+
+    if intType == INTERACT_POLE then
+        if m.action == ACT_HOMING_ATTACK then
             return false
         end
     end
