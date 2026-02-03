@@ -1511,8 +1511,11 @@ function sonic_value_refresh(m)
     local m = type(m) == "table" and m or gMarioStates[0] -- Fall back to local index
     local e = gCharacterStates[m.playerIndex].sonic
     local p = gPlayerSyncTable[m.playerIndex]
+    local level = gNetworkPlayers[m.playerIndex].currLevelNum
+    local bowserFight = (obj_get_first_with_behavior_id(id_bhvBowser) ~= nil
+    or (level == LEVEL_BOWSER_1 or level == LEVEL_BOWSER_2 or level == LEVEL_BOWSER_3))
     e.oxygen = 900
-    p.rings = GAMEMODE_ACTIVE and 10 or 0
+    p.rings = (GAMEMODE_ACTIVE or bowserFight) and 10 or 0
 end
 
 local bounceTypes = {
