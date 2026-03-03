@@ -25,7 +25,7 @@ function setup_recolor_icons()
         { NONE, PANTS, CAP, FEATURE, NONE, NONE},
         { NONE, NONE, CAP, FEATURE, NONE, NONE}
     )
-    dynamicHudAPI.add_head_for_cs(CT_FOREMANSPIKE, nil, get_texture_info("recolor_icon_foremanspike"),
+    dynamicHudAPI.add_head_for_cs(CT_SPIKE, nil, get_texture_info("recolor_icon_foremanspike"),
         { SKIN, HAIR, CAP, HAIR, EMBLEM, NONE, NONE},
         { SKIN, HAIR, NONE, NONE, NONE, HAIR, FEATURE}
     )
